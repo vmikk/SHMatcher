@@ -9,6 +9,55 @@ params.its_region = "itsfull"  // alternatively, "its2"
 params.db     = "sanger_refs_sh.udb"
 params.dbfull = "sanger_refs_sh_full.udb"
 
+
+// Chimera filtering
+process chimera_filtering {
+
+    label "main_container"
+
+    cpus 8
+
+    input:
+      path input
+      path db        // sanger_refs_sh.udb
+
+    output:
+      path "seqs_out.fasta",                       emit: fasta
+      path "seqs_out_chim.fasta",                  emit: chim
+      path "usearch_global.full.75.map.uc",        emit: uc
+      path "usearch_global.full.75.blast6out.txt", emit: blast6out
+
+    script:
+    """
+    echo -e "Chimera filtering\n"
+
+    ## vsearch usearch_global
+    vsearch \
+      --usearch_global ${input} \
+      --db             ${db} \
+      --strand         plus \
+      --id             0.75 \
+      --threads        ${task.cpus} \
+      --uc             usearch_global.full.75.map.uc \
+      --blast6out      usearch_global.full.75.blast6out.txt \
+      --output_no_hits
+
+    ## Handle all potentially chimeric sequences from usearch_global
+    exclude_chims.py \
+      --global_infile usearch_global.full.75.blast6out.txt \
+      --infile        seqs_out.fasta \
+      --outfile       seqs_out_chim.fasta \
+      --log_file      err.log \
+      --ex_file       excluded.txt \
+      --region        ${params.its_region} \
+
+    echo -e "..Done"
+
+    """
+}
+
+
+
 // Input sequence preparion:
 // Replace sequence identifiers with unique codes,
 // Remove duplicate sequences
