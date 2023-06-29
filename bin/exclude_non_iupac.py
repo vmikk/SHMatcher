@@ -11,33 +11,46 @@ from pathlib import Path
 from Bio import SeqIO
 
 parser = argparse.ArgumentParser(description="Script to remove sequences with more than X ambiguous bases)")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("allowed_number", help="Need allowed number of ambiguous bases in numeric format!")
+
+parser.add_argument("--infile",      default="seqs_out_chim.fasta",  help="Input file")
+parser.add_argument("--infile_orig", default="source_fasta_unique",  help="Input originalfile")
+parser.add_argument("--outfile",     default="iupac_out_full.fasta", help="Output file")
+parser.add_argument("--outfile_vsearch_96", default="iupac_out_vsearch_96.fasta", help="Output vsearch file")
+parser.add_argument("--log_file",    default="err.log",      help="Log file")
+parser.add_argument("--ex_file",     default="excluded.txt", help="Excluded seqs")
+
+parser.add_argument("--allowed_number", default=6,   help="Allowed number of ambiguous bases in numeric format")
+
+## TODO?
+# parser.add_argument("--min_seqlength",  default=300, help="Minimum sequences length")
+
 args = parser.parse_args()
 
 # read in args
-run_id = args.run_id
-allowed_number = args.allowed_number
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-if not allowed_number.isdigit():
-    raise ValueError("Allowed number of ambiguous bases is not numeric", run_id)
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+infile             = args.infile              # user_dir / "seqs_out_chim.fasta"
+infile_orig        = args.infile_orig         # user_dir / f"source_{run_id}_fastaunique"
+outfile            = args.outfile             # user_dir / "iupac_out_full.fasta"
+outfile_vsearch_96 = args.outfile_vsearch_96  # user_dir / "iupac_out_vsearch_96.fasta"
+log_file           = args.log_file            # user_dir / f"err_{run_id}.log"
+ex_file            = args.ex_file             # user_dir / f"excluded_{run_id}.txt"
+allowed_number     = args.allowed_number
+# min_seqlength      = args.min_seqlength
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-infile = user_dir / "seqs_out_chim.fasta"
-infile_orig = user_dir / f"source_{run_id}_fastaunique"
-outfile = user_dir / "iupac_out_full.fasta"
-outfile_vsearch_96 = user_dir / "iupac_out_vsearch_96.fasta"
+if not allowed_number.isdigit():
+    raise ValueError("Allowed number of ambiguous bases is not numeric")
+
+if not min_seqlength.isdigit():
+    raise ValueError("Specified minimum sequence length is not numeric")
+
 
 # Logging conf
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level="INFO",
 )
-ex_file = user_dir / f"excluded_{run_id}.txt"
 
 # use the original sequence for vsearch 100% clustering and not the one that came out from ITSx extractor
 orig_seqs_dict = {}
