@@ -14,11 +14,11 @@ parser = argparse.ArgumentParser(
     description="Script to select representative sequences from vsearch 100 percent clustering"
 )
 
-parser.add_argument("infile_centroids", help="Input 1")
-parser.add_argument("infile_iupac",     help="Input 2")
-parser.add_argument("outfile",          help="Output file name")
-parser.add_argument("log_file",         help="Log file name")
-parser.add_argument("ex_file",          help="Excluded seqs log")
+parser.add_argument("--infile_centroids", default="centroids_100.fasta",     help="Input 1")
+parser.add_argument("--infile_iupac",     default="iupac_out_full.fasta",    help="Input 2")
+parser.add_argument("--outfile",          default="iupac_out_vsearch.fasta", help="Output file name")
+parser.add_argument("--log_file",         default="err.log",                 help="Log file name")
+parser.add_argument("--ex_file",          default="excluded.txt",            help="Excluded seqs log")
 
 args = parser.parse_args()
 
