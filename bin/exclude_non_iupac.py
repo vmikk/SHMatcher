@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+## Script to remove sequences with more than X ambiguous bases
+
 import argparse
 import logging
 import os
@@ -29,7 +32,10 @@ outfile_vsearch_96 = user_dir / "iupac_out_vsearch_96.fasta"
 # Logging conf
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 ex_file = user_dir / f"excluded_{run_id}.txt"
 
@@ -42,13 +48,15 @@ with open(infile_orig, "r") as handle:
 infile_hash1 = {}
 
 # open excluded seq file
-with open(ex_file, "a") as ex, open(outfile, "w") as o, open(outfile_vsearch_96, "w") as o2, open(infile, "r") as handle:
+with open(ex_file, "a") as ex, open(outfile, "w") as o, open(outfile_vsearch_96, "w") as o2, open(
+    infile, "r"
+) as handle:
     for record in SeqIO.parse(handle, "fasta"):
         name = record.id
         seq = str(record.seq).upper()
         sequencelength = len(seq)
-        regexPattern_1 = re.compile('[YRSWKMBDHVN]')
-        regexPattern_2 = re.compile('[N]')
+        regexPattern_1 = re.compile("[YRSWKMBDHVN]")
+        regexPattern_2 = re.compile("[N]")
         listOfmatches_1 = regexPattern_1.findall(seq)
         listOfmatches_2 = regexPattern_2.findall(seq)
         numberofIUPACs_1 = len(listOfmatches_1)
@@ -66,18 +74,26 @@ with open(ex_file, "a") as ex, open(outfile, "w") as o, open(outfile_vsearch_96,
                     numberofIUPACs2_2 = len(listOfmatches2_2)
                     if numberofIUPACs2_2 > int(allowed_number) or numberofIUPACs2_1 > 16:
                         logging.info(f"IUPAC\tIUPAC PROBLEM: {name} ({numberofIUPACs_1}, {numberofIUPACs_2}, cut)")
-                        ex.write(f"{name}\tIUPAC\tThe number of ambiguous bases ({numberofIUPACs_1}, {numberofIUPACs_2}) in cut sequence exceeds the number of allowed ambiguous bases (16, {allowed_number})\n")
+                        ex.write(
+                            f"{name}\tIUPAC\tThe number of ambiguous bases ({numberofIUPACs_1}, {numberofIUPACs_2}) in cut sequence exceeds the number of allowed ambiguous bases (16, {allowed_number})\n"
+                        )
                     else:
                         o.write(f">{name}\n")
                         o.write(f"{part_1}\n")
                         o2.write(f">{name}\n")
                         o2.write(f"{orig_seqs_dict[name]}\n")
                 else:
-                    logging.info(f"IUPAC\tIUPAC PROBLEM: {name} ({numberofIUPACs_1}, {numberofIUPACs_2}, cut but too short to fix)")
-                    ex.write(f"{name}\tIUPAC\tThe number of ambiguous bases ({numberofIUPACs_1}, {numberofIUPACs_2}) in sequence exceeds the number of allowed ambiguous bases (16, {allowed_number}). Cut, but too short to fix.\n")
+                    logging.info(
+                        f"IUPAC\tIUPAC PROBLEM: {name} ({numberofIUPACs_1}, {numberofIUPACs_2}, cut but too short to fix)"
+                    )
+                    ex.write(
+                        f"{name}\tIUPAC\tThe number of ambiguous bases ({numberofIUPACs_1}, {numberofIUPACs_2}) in sequence exceeds the number of allowed ambiguous bases (16, {allowed_number}). Cut, but too short to fix.\n"
+                    )
             else:
                 logging.info(f"IUPAC\tIUPAC PROBLEM: {name} ({numberofIUPACs_1}, {numberofIUPACs_2})")
-                ex.write(f"{name}\tIUPAC\tThe number of ambiguous bases ({numberofIUPACs_1}, {numberofIUPACs_2}) in sequence exceeds the number of allowed ambiguous bases (16, {allowed_number})\n")
+                ex.write(
+                    f"{name}\tIUPAC\tThe number of ambiguous bases ({numberofIUPACs_1}, {numberofIUPACs_2}) in sequence exceeds the number of allowed ambiguous bases (16, {allowed_number})\n"
+                )
         else:
             o.write(f">{name}\n")
             o.write(f"{seq}\n")
