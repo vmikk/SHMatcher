@@ -9,22 +9,22 @@ from pathlib import Path
 from Bio import SeqIO
 
 parser = argparse.ArgumentParser(description="Script to replace original seq. ids with unique internal ids.")
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+# Read in args
+parser.add_argument("--infile",     help="Input file")
+parser.add_argument("--fasta_file", default="source_fasta", help="Output sequences")
+parser.add_argument("--names_file", default="source_names", help="Output names")
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-infile = user_dir / f"source_{run_id}"
-fasta_file = user_dir / f"source_{run_id}_fasta"
-names_file = user_dir / f"source_{run_id}_names"
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+infile     = args.infile       # user_dir / f"source_{run_id}"
+fasta_file = args.fasta_file   # user_dir / f"source_{run_id}_fasta"
+names_file = args.names_file   # user_dir / f"source_{run_id}_names"
 
 with open(infile, "r") as handle, open(fasta_file, "w") as f, open(names_file, "w") as n:
     for counter, record in enumerate(SeqIO.parse(handle, "fasta"), start=1):
-        new_id = f"{run_id}_{counter}"
+        new_id = f"id_{counter}"
 
         f.write(f">i{new_id}i\n")
         f.write(f"{record.seq}\n")
