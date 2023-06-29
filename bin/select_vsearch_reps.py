@@ -13,28 +13,32 @@ from Bio import SeqIO
 parser = argparse.ArgumentParser(
     description="Script to select representative sequences from vsearch 100 percent clustering"
 )
+
 parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("infile_centroids", help="Input 1")
+parser.add_argument("infile_iupac",     help="Input 2")
+parser.add_argument("outfile",          help="Output file name")
+parser.add_argument("log_file",         help="Log file name")
+parser.add_argument("ex_file",          help="Excluded seqs log")
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-infile_centroids = user_dir / "centroids_100.fasta"
-infile_iupac = user_dir / "iupac_out_full.fasta"
-outfile = user_dir / "iupac_out_vsearch.fasta"
+## Read in args
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+infile_centroids = args.infile_centroids   # user_dir / "centroids_100.fasta"
+infile_iupac     = args.infile_iupac       # user_dir / "iupac_out_full.fasta"
+outfile          = args.outfile            # user_dir / "iupac_out_vsearch.fasta"
+log_file         = args.log_file           # user_dir / f"err_{run_id}.log"
+ex_file          = args.ex_file            # user_dir / f"excluded_{run_id}.txt"
 
 # Logging conf
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level="INFO",
 )
-ex_file = user_dir / f"excluded_{run_id}.txt"
 
 seq_counter = 0
 disc_seq_counter = 0
