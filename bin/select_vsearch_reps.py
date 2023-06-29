@@ -14,8 +14,6 @@ parser = argparse.ArgumentParser(
     description="Script to select representative sequences from vsearch 100 percent clustering"
 )
 
-parser.add_argument("run_id", help="Need run id in numeric format!")
-
 parser.add_argument("infile_centroids", help="Input 1")
 parser.add_argument("infile_iupac",     help="Input 2")
 parser.add_argument("outfile",          help="Output file name")
