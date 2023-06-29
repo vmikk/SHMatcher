@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+## Script to select representative sequences from vsearch 100 percent clustering
+
 import argparse
 import logging
 import os
@@ -7,7 +10,9 @@ from pathlib import Path
 
 from Bio import SeqIO
 
-parser = argparse.ArgumentParser(description="Script to select representative sequences from vsearch 100 percent clustering")
+parser = argparse.ArgumentParser(
+    description="Script to select representative sequences from vsearch 100 percent clustering"
+)
 parser.add_argument("run_id", help="Need run id in numeric format!")
 args = parser.parse_args()
 
@@ -24,7 +29,10 @@ outfile = user_dir / "iupac_out_vsearch.fasta"
 # Logging conf
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 ex_file = user_dir / f"excluded_{run_id}.txt"
 
