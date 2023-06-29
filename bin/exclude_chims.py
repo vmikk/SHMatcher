@@ -11,33 +11,40 @@ from pathlib import Path
 from Bio import SeqIO
 
 parser = argparse.ArgumentParser(description="Script to exclude chimeras identified by vsearch")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("region", help="Need region (either its2 or itsfull)!")
+
+parser.add_argument("--global_infile", default="usearch_global.full.75.blast6out.txt", help="Blast6out input file")
+parser.add_argument("--infile",        default="seqs_out.fasta",      help="Input file")
+parser.add_argument("--outfile",       default="seqs_out_chim.fasta", help="Chimeric sequences")
+parser.add_argument("--log_file",      default="err.log",             help="Log file name")
+parser.add_argument("--ex_file",       default="excluded.txt",        help="Excluded seqs log")
+parser.add_argument("--region",        help="ITS region (either its2 or itsfull)")
+
+## TODO:
+# parser.add_argument("--minlen1")
+# parser.add_argument("--minlen2")
+
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
+# user_dir = args.user_dir          # Path(f"{os.getcwd()}/userdir/{run_id}")
+global_infile = args.global_infile  # user_dir / "usearch_global.full.75.blast6out.txt"
+infile        = args.infile         # user_dir / "seqs_out.fasta"
+outfile       = args.outfile        # user_dir / "seqs_out_chim.fasta"
+log_file      = args.log_file       # user_dir / f"err_{run_id}.log"
+ex_file       = args.ex_file        # user_dir / f"excluded_{run_id}.txt"
+region        = args.region
 
-region = args.region
+# Read in args
 if not region == "its2" and not region == "itsfull":
     raise ValueError("Region is not one of: its2, itsfull", region)
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-global_infile = user_dir / "usearch_global.full.75.blast6out.txt"
-infile = user_dir / "seqs_out.fasta"
-outfile = user_dir / "seqs_out_chim.fasta"
-
 # Logging conf
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level="INFO",
 )
-ex_file = user_dir / f"excluded_{run_id}.txt"
 
 nohit_counter = 0
 nogo_counter = 0
