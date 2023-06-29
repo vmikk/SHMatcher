@@ -6,6 +6,9 @@ params.input = false
 
 params.its_region = "itsfull"  // alternatively, "its2"
 
+params.db     = "sanger_refs_sh.udb"
+params.dbfull = "sanger_refs_sh_full.udb"
+
 // Input sequence preparion:
 // Replace sequence identifiers with unique codes,
 // Remove duplicate sequences
