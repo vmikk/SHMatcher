@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+## Script to exclude chimeras identified by vsearch
+
 import argparse
 import csv
 import logging
@@ -29,7 +32,10 @@ outfile = user_dir / "seqs_out_chim.fasta"
 # Logging conf
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 ex_file = user_dir / f"excluded_{run_id}.txt"
 
@@ -97,6 +103,8 @@ with open(ex_file, "a") as ex, open(global_infile) as glob:
             else:
                 chim_counter += 1
                 logging.info(f"CHIM\tCHIM_RECORD\t{record.id}")
-                ex.write(f"{record.id}\tCHIM\tIdentified as chimeric based on the results of vsearch (usearch_global) chimera detection.\n")
+                ex.write(
+                    f"{record.id}\tCHIM\tIdentified as chimeric based on the results of vsearch (usearch_global) chimera detection.\n"
+                )
 
     logging.info(f"CHIM\tNo go for {nogo_counter} (length) + {chim_counter} (chims) sequences.")
