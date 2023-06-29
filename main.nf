@@ -1,63 +1,54 @@
-#!/usr/bin/env nextflow
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/shmatcher
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/shmatcher
-    Website: https://nf-co.re/shmatcher
-    Slack  : https://nfcore.slack.com/channels/shmatcher
-----------------------------------------------------------------------------------------
-*/
+// Species hypothesis (SH) matching analysis tool
+//  Based on the SH MATCHING analysis tool: https://github.com/TU-NHM/sh_matching_pub
 
-nextflow.enable.dsl = 2
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+params.input = false
 
-params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
+params.its_region = "itsfull"  // alternatively, "its2"
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE & PRINT PARAMETER SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+// Input sequence preparion:
+// Replace sequence identifiers with unique codes,
+// Remove duplicate sequences
+process seq_prep {
 
-WorkflowMain.initialise(workflow, params, log)
+    label "main_container"
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NAMED WORKFLOW FOR PIPELINE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+    // cpus 1
 
-include { SHMATCHER } from './workflows/shmatcher'
+    input:
+      path input
 
-//
-// WORKFLOW: Run main nf-core/shmatcher analysis pipeline
-//
-workflow NFCORE_SHMATCHER {
-    SHMATCHER ()
+    output:
+      path "SeqQualities.txt.gz", emit: quals
+
+    script:
+    """
+    echo -e "Aggregating sequence qualities"
+
+    ## replace sequence identifiers with unique codes for the analysis
+    python3 "$script_dir"/replace_seq_names_w_codes.py "$run_id"
+
+
+    pushd "$user_dir"
+    "$program_dir/vsearch/bin/vsearch" --fastx_uniques $infile_new_w_dir --fastaout "$infile_new""unique" --uc "$infile_new""uc"
+    popd
+    
+    python3 "$script_dir"/reformat_fastx_uniques_output.py "$run_id"
+
+
+    ## Additional quality controls - Remove low quality sequences (too short or with too many non-IUPAC symbols)
+    python3 "$script_dir/exclude_non_iupac.py" "$run_id" 6
+
+
+
+    echo -e "..Done"
+
+    """
 }
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN ALL WORKFLOWS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+}
 
-//
-// WORKFLOW: Execute a single named workflow for the pipeline
-// See: https://github.com/nf-core/rnaseq/issues/619
-//
+
 workflow {
-    NFCORE_SHMATCHER ()
 }
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
