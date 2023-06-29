@@ -1,3 +1,7 @@
+#!/usr/bin/python
+
+## Script to replace original seq. ids with unique internal ids.
+
 import argparse
 import os
 from pathlib import Path

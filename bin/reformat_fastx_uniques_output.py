@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+## Script to format vsearch --fastx_uniques output to restore original sequence.
+
 import argparse
 import csv
 import os
@@ -6,7 +9,9 @@ from pathlib import Path
 
 from Bio import SeqIO
 
-parser = argparse.ArgumentParser(description="Script to format vsearch --fastx_uniques output to restore original sequence.")
+parser = argparse.ArgumentParser(
+    description="Script to format vsearch --fastx_uniques output to restore original sequence."
+)
 parser.add_argument("run_id", help="Need run id in numeric format!")
 args = parser.parse_args()
 
