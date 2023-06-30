@@ -1,4 +1,5 @@
 # A base Ubuntu 20 Singularity container with basic Python packages
+## Based on https://github.com/TU-NHM/sh_matching_pub/blob/master/sh_matching.def
 
 BootStrap: library
 From: ubuntu:20.04
@@ -8,70 +9,85 @@ A base Ubuntu 20 Singularity container with basic Python packages such as HMMER3
 
 %post
     # Some package only available in "universe" repo
-    apt update -y
-    apt install -y software-properties-common
-    add-apt-repository universe
+    apt update -y \
+      && apt install -y software-properties-common \
+      && add-apt-repository universe \
+      && apt update -y \
+      && apt upgrade -y \
+      && apt install -y \
+        tar zip unzip pigz gzip coreutils \
+        curl wget git less gawk nano rename bc \
+        ca-certificates locales  \
+        libtre-dev libtre5 zlib1g zlib1g-dev \
+        build-essential
 
-    apt update
-    apt upgrade -y
+    ## Install conda
+    readonly conda_prefix="/opt/software/conda"
 
-    apt install -y python3  # Python 3.8
-    apt install -y python3-pip
-    apt install -y zip
-    apt install -y unzip
-    apt install -y hmmer
-    apt install -y wget
+    mkdir -p /opt/software
+    cd /opt/software
+    curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash ./Miniconda3-latest-Linux-x86_64.sh -u -b -p ${conda_prefix}
+    rm Miniconda3-latest-Linux-x86_64.sh
 
-    mkdir -p /sh_matching/programs/
+    ${conda_prefix}/bin/conda config --add channels defaults
+    ${conda_prefix}/bin/conda config --add channels conda-forge
+    ${conda_prefix}/bin/conda config --add channels bioconda
+    ${conda_prefix}/bin/conda install -y -c conda-forge mamba
 
-    # biopython
-    pip3 install --no-cache-dir --upgrade biopython==1.79
+    ## Conda initialization script by Antoine Prouvost
+    # https://github.com/ds4dm/singularity-conda/blob/main/conda.def
+    # Singularity does all the environment sourcing as shell (only latter calls bash), which conda does not support.
+    # We put the content in a file, manually call bash, and source it.
+    {
+        echo 'eval "$(' "'${conda_prefix}/bin/conda' 'shell.bash' 'hook' 2> /dev/null" ')"'
+        echo 'if [ $? -eq 0 ]; then'
+        echo '  eval "$__conda_setup"'
+        echo 'else'
+        echo '  if [ -f ' "'${conda_prefix}/etc/profile.d/conda.sh'" ']; then'
+        echo '    .' "'${conda_prefix}/opt/mamba/etc/profile.d/conda.sh'"
+        echo '  else'
+        echo '    export PATH="/opt/software/conda/bin:$PATH"'
+        echo '  fi'
+        echo 'fi'
+        echo 'unset __conda_setup'
+    } >> ${conda_prefix}/init.bash
+
+    ## Create conda environment and install software
+    ${conda_prefix}/bin/mamba install -y \
+      "biopython>=1.79" \
+      "vsearch>=2.22" \
+      "krona>=2.7.1"
+ 
+       # "python==3.8" \
+       # "pip" \
 
     # usearch 11.0.667
     wget https://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz
     gunzip usearch11.0.667_i86linux32.gz
-    mv usearch11.0.667_i86linux32 /sh_matching/programs/usearch
-    chmod 0111 /sh_matching/programs/usearch
+    chmod 0111 usearch11.0.667_i86linux32
+    mv usearch11.0.667_i86linux32 ${conda_prefix}/bin/usearch
 
-    # vsearch 2.22.1
-    # apt install -y vsearch=2.22.1
-    wget https://github.com/torognes/vsearch/releases/download/v2.22.1/vsearch-2.22.1-linux-x86_64.tar.gz
-    tar -xvf vsearch-2.22.1-linux-x86_64.tar.gz -C /sh_matching/programs/
-    mv /sh_matching/programs/vsearch-2.22.1-linux-x86_64 /sh_matching/programs/vsearch
+    ## Clean up
+    apt-get autoremove -y \
+      && apt-get autoclean -y \
+      && rm -rf /var/lib/apt/lists/* \
+      && ${conda_prefix}/bin/mamba clean --all --yes
 
-    # ITSx 1.1.3
-    wget https://microbiology.se/sw/ITSx_1.1.3.tar.gz
-    tar -xzvf ITSx_1.1.3.tar.gz
-    mv ITSx_1.1.3 /sh_matching/programs/ITSx
-    rm ITSx_1.1.3.tar.gz
-    mv /sh_matching/programs/ITSx_db_pre/* /sh_matching/programs/ITSx/ITSx_db/HMMs/
+    ## Activate environment
+    # source ${conda_prefix}/bin/activate ${conda_prefix}
 
+    ## Use bash to properly activate the conda environment
+    echo 'source' "'${conda_prefix}/init.bash'" | bash
 
-    # Installing Krona
-    wget https://github.com/marbl/Krona/releases/download/v2.7.1/KronaTools-2.7.1.tar
-    tar -xvf KronaTools-2.7.1.tar -C /sh_matching/programs/
-    rm KronaTools-2.7.1.tar
-    cd /sh_matching/programs/KronaTools-2.7.1/
-    perl install.pl --prefix ../krona
-    cd /
+    cd /opt/software
 
-    # Get database files (https://app.plutof.ut.ee/filerepository/view/5612493)
-    wget https://files.plutof.ut.ee/public/orig/1C/D8/1CD8036BE151642FED7D88C1B589B633393C964B6DFB37016A6040F4988E22DE.zip
-    mv 1CD8036BE151642FED7D88C1B589B633393C964B6DFB37016A6040F4988E22DE.zip sh_matching_data_0_5.zip
-    unzip sh_matching_data_0_5.zip -d /sh_matching/
-    rm sh_matching_data_0_5.zip
 
 %environment
     export LC_ALL=C
+    export PATH=$PATH:"/opt/software/conda/bin/"
+    echo 'source' "'/opt/software/conda/init.bash'" | bash
 
 %runscript
     exec "$@"
 
-%labels
-    Author kessya
-
-%files
-    sh_matching_analysis/readme.txt /sh_matching/readme.txt
-    sh_matching_analysis/run_pipeline.sh /sh_matching/run_pipeline.sh
-    sh_matching_analysis/scripts/* /sh_matching/scripts/
-    sh_matching_analysis/ITSx_db_pre/* /sh_matching/programs/ITSx_db_pre/
