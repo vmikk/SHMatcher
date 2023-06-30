@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 ## Script to parse USEARCH preclustering output for the next clustering step
 

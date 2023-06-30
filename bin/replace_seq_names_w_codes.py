@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 ## Script to replace original seq. ids with unique internal ids.
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 ## Script to format vsearch --fastx_uniques output to restore original sequence.
 

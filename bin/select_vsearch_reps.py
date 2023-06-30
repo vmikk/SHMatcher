@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 ## Script to select representative sequences from vsearch 100 percent clustering
 
