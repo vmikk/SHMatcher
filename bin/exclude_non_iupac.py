@@ -40,8 +40,8 @@ allowed_number     = args.allowed_number
 if not allowed_number.isdigit():
     raise ValueError("Allowed number of ambiguous bases is not numeric")
 
-if not min_seqlength.isdigit():
-    raise ValueError("Specified minimum sequence length is not numeric")
+# if not min_seqlength.isdigit():
+#    raise ValueError("Specified minimum sequence length is not numeric")
 
 
 # Logging conf
