@@ -10,6 +10,53 @@ params.db     = "sanger_refs_sh.udb"
 params.dbfull = "sanger_refs_sh_full.udb"
 
 
+
+// Input sequence preparion:
+// Replace sequence identifiers with unique codes,
+// Remove duplicate sequences
+process seq_prep {
+
+    label "main_container"
+
+    // cpus 1
+
+    input:
+      path input
+
+    output:
+      path "source_names",               emit: namesorig
+      path "source_fasta_unique",        emit: unique
+      path "source_fasta_uc",            emit: uc
+      path "source_fasta_names",         emit: namesuniq
+
+    script:
+    """
+    echo -e "Input sequence preparion\n"
+
+    ## Replace sequence identifiers with unique codes for the analysis
+    echo -e "\n..Replacing sequence names with codes\n"
+    replace_seq_names_w_codes.py \
+      --infile ${input} \
+      --fasta_file source_fasta \
+      --names_file source_names
+
+    ## Find the set of unique sequences in an input file
+    echo -e "\n..Dereplicating sequences\n"
+    vsearch \
+      --fastx_uniques source_fasta \
+      --fastaout      source_fasta_unique \
+      --uc            source_fasta_uc
+
+    ## Format output to restore original sequence
+    echo -e "\n..Reformatting sequences\n"
+    reformat_fastx_uniques_output.py \
+      --infile  source_fasta_uc \
+      --outfile source_fasta_names
+
+    echo -e "..Done"
+    """
+}
+
 // Chimera filtering
 process chimera_filtering {
 
