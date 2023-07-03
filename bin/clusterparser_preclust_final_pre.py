@@ -25,11 +25,6 @@ parser.add_argument("--log",     default="err.log",                 help="Log fi
 
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-
 # user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
 file = args.cl80uc              # user_dir / "clusters_80_pre.uc"
 tmp_file1 = args.cl97           # user_dir / "clusters_out_97_pre.txt"
@@ -148,12 +143,12 @@ with open(tmp_file4, "r") as f:
         cluster_seqs = row[2].split(" ")
         if len(cluster_seqs) == 1:
             # singleton cluster
-            singl_file = "singletons" / f"Singleton{row[0]}"
+            singl_file = os.path.join("singletons", f"Singleton{row[0]}")
             with open(singl_file, "w") as s:
                 s.write(f">{cluster_seqs[0]}\n")
                 s.write(f"{original_seq_dict[cluster_seqs[0]]}\n")
         else:
-            cl_file = "clusters" / f"Cluster{row[0]}"
+            cl_file = os.path.join("clusters", f"Cluster{row[0]}")
             with open(cl_file, "w") as c:
                 for item in cluster_seqs:
                     c.write(f">{item}\n{original_seq_dict[item]}\n")
