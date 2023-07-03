@@ -141,16 +141,39 @@ process exclude_non_iupac {
     """
 }
 
+
+// Allow query sequences vary in length at 100% similarity
+process seqlen_variation {
+
+    label "main_container"
+
+    cpus 8
+
+    input:
+      path input   // iupac_out_vsearch_96.fasta
+
     output:
-      path "SeqQualities.txt.gz", emit: quals
+      path "centroids_100.fasta", emit: seqs
+      path "clusters_100.uc",     emit: uc
 
     script:
     """
-    echo -e "Aggregating sequence qualities"
+    echo "Running vsearch 100% clustering"
+    
+    vsearch \
+      --cluster_fast ${input} \
+      --id           1 \
+      --iddef        0 \
+      --threads      ${task.cpus} \
+      --uc           clusters_100.uc \
+      --centroids    centroids_100.fasta \
+      --query_cov    0.96 \
+      --target_cov   0.96
 
-    ## replace sequence identifiers with unique codes for the analysis
-    python3 "$script_dir"/replace_seq_names_w_codes.py "$run_id"
+    echo -e "..Done"
 
+    """
+}
 
     pushd "$user_dir"
     "$program_dir/vsearch/bin/vsearch" --fastx_uniques $infile_new_w_dir --fastaout "$infile_new""unique" --uc "$infile_new""uc"
