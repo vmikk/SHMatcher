@@ -274,6 +274,16 @@ process clustering {
 }
 
 
+//  Workflow
 workflow {
+      
+  // Input file sequences (FASTA)
+  ch_input = Channel.value(params.input)
+
+  // Sequence preparaion
+  seq_prep(ch_input)
+
+}
+
 }
 
