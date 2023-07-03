@@ -268,6 +268,60 @@ process clustering {
     """
 }
 */
+
+
+// Final round of sequence clustering (80%),
+// Aggregation of clustering results
+process clustering_final {
+    tag "$threshold"
+    label "main_container"
+
+    // cpus 10
+
+    input:
+      path input       // in_80_pre.fasta
+      path iupac       // iupac_out_vsearch.fasta
+      path clust97     // clusters_out_97_pre.txt
+      path clust95     // clusters_out_95_pre.txt
+      path clust90     // clusters_out_90_pre.txt
+
+    output:
+      path "clusters/*",          emit: clusters
+      path "singletons/*",        emit: singletons
+      path "clusters_80.uc",      emit: uc80
+      path "clusters_out_80.txt", emit: txt80
+
+    script:
+
+    """
+    echo -e "Sequence clustering"
+    echo -e "Similarity threshold: 80"
+
+    ## Clustering
+    echo -e "\n..Running USEARCH\n"
+    usearch \
+      -cluster_fast ${input} \
+      -id           0.80 \
+      -gapopen      0.0/0.0E \
+      -gapext       1.0/0.5E \
+      -sort         other \
+      -uc           clusters_80.uc
+
+    mkdir -p singletons
+    mkdir -p clusters
+
+    ## Parsing and aggregating clustering information
+    echo -e "\n..Parsing and aggregating clustering info\n"
+    clusterparser_preclust_final_pre.py \
+      --cl80uc   clusters_80.uc  \
+      --cl97     ${clust97} \
+      --cl95     ${clust95} \
+      --cl90     ${clust90} \
+      --cl80     clusters_out_80.txt \
+      --allseqs  ${iupac} \
+      --log      err.log
+
+    echo -e "..Done"
     """
 }
 
