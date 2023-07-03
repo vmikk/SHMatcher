@@ -104,11 +104,8 @@ process chimera_filtering {
 }
 
 
-
-// Input sequence preparion:
-// Replace sequence identifiers with unique codes,
-// Remove duplicate sequences
-process seq_prep {
+// Additional quality controls
+process exclude_non_iupac {
 
     label "main_container"
 
@@ -116,6 +113,31 @@ process seq_prep {
 
     input:
       path input
+      path inputuniq
+
+    output:
+      path "iupac_out_full.fasta",       emit: iupac
+      path "iupac_out_vsearch_96.fasta", emit: iupac96
+      path "excluded.txt",               emit: excluded
+
+    script:
+    """
+    echo -e "Additional quality controls\n"
+
+    ## Additional quality controls
+    ## Remove low quality sequences (too short or with too many non-IUPAC symbols)
+    exclude_non_iupac.py \
+      --infile              ${input} \
+      --infile_orig         ${inputuniq} \
+      --outfile             iupac_out_full.fasta \
+      --outfile_vsearch_96  iupac_out_vsearch_96.fasta \
+      --log_file            err.log \
+      --ex_file             excluded.txt \
+      --allowed_number      6
+
+    echo -e "..Done"
+    """
+}
 
     output:
       path "SeqQualities.txt.gz", emit: quals
