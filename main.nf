@@ -175,11 +175,37 @@ process seqlen_variation {
     """
 }
 
-    pushd "$user_dir"
-    "$program_dir/vsearch/bin/vsearch" --fastx_uniques $infile_new_w_dir --fastaout "$infile_new""unique" --uc "$infile_new""uc"
-    popd
+
+// Prepare representative sequences
+process select_representatives {
+
+    label "main_container"
+
+    // cpus 1
+
+    input:
+      path centroids   // centroids_100.fasta
+      path iupac       // iupac_out_full.fasta
+
+    output:
+      path "iupac_out_vsearch.fasta", emit: fasta
+
+    script:
+    """
+    echo "Printing out vsearch representatives"
     
-    python3 "$script_dir"/reformat_fastx_uniques_output.py "$run_id"
+    ## vsearch representatives (the sequence count diff. is 9.5% for vsearch 4%)
+    select_vsearch_reps.py \
+      --infile_centroids ${centroids} \
+      --infile_iupac     ${iupac} \
+      --outfile          iupac_out_vsearch.fasta \
+      --log_file         err.log
+
+    echo -e "..Done"
+
+    """
+
+}
 
 
     ## Additional quality controls - Remove low quality sequences (too short or with too many non-IUPAC symbols)
