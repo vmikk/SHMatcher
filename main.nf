@@ -207,6 +207,12 @@ process select_representatives {
 
 }
 
+// Create module aliases
+// (to reuse the same process code, but chain the input-output of these processes)
+include { clustering as clustering_97 } from './modules/clustering.nf'
+include { clustering as clustering_95 } from './modules/clustering.nf'
+include { clustering as clustering_90 } from './modules/clustering.nf'
+include { clustering as clustering_80 } from './modules/clustering.nf'
 
 /*
 // Sequence clustering (97-95-90-80% clustering)
