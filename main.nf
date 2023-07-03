@@ -69,16 +69,17 @@ process chimera_filtering {
       path db        // sanger_refs_sh.udb
 
     output:
-      path "seqs_out.fasta",                       emit: fasta
-      path "seqs_out_chim.fasta",                  emit: chim
+      path "seqs_out_chim.fasta",                  emit: fasta
       path "usearch_global.full.75.map.uc",        emit: uc
       path "usearch_global.full.75.blast6out.txt", emit: blast6out
+      path "excluded.txt",                         emit: excluded, optional: true
 
     script:
     """
     echo -e "Chimera filtering\n"
 
     ## vsearch usearch_global
+    echo -e "..Running VSEARCH\n"
     vsearch \
       --usearch_global ${input} \
       --db             ${db} \
@@ -90,9 +91,10 @@ process chimera_filtering {
       --output_no_hits
 
     ## Handle all potentially chimeric sequences from usearch_global
+    echo -e "\n..Processing VSEARCH output\n"
     exclude_chims.py \
       --global_infile usearch_global.full.75.blast6out.txt \
-      --infile        seqs_out.fasta \
+      --infile        ${input} \
       --outfile       seqs_out_chim.fasta \
       --log_file      err.log \
       --ex_file       excluded.txt \
