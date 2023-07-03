@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+## Script to parse USEARCH preclustering outputs (all)
+
 import argparse
 import csv
 import logging
@@ -10,7 +14,15 @@ from Bio import SeqIO
 csv.field_size_limit(sys.maxsize)
 
 parser = argparse.ArgumentParser(description="Script to parse USEARCH preclustering outputs (all)")
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("--cl80uc", default="clusters_80_pre.uc",    help="UC file from 80-percent clustering")
+parser.add_argument("--cl97", default="clusters_out_97_pre.txt", help="97-clustering results")
+parser.add_argument("--cl95", default="clusters_out_95_pre.txt", help="95-clustering results")
+parser.add_argument("--cl90", default="clusters_out_90_pre.txt", help="90-clustering results")
+parser.add_argument("--cl80", default="clusters_out_80_pre.txt", help="80-clustering results")
+parser.add_argument("--allseqs", default="iupac_out_vsearch.fasta", help="All sequences")
+parser.add_argument("--log",     default="err.log",                 help="Log file")
+
 args = parser.parse_args()
 
 # read in args
@@ -18,17 +30,20 @@ run_id = args.run_id
 if not run_id.isdigit():
     raise ValueError("Run id is not numeric", run_id)
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-file = user_dir / "clusters_80_pre.uc"
-tmp_file1 = user_dir / "clusters_out_97_pre.txt"
-tmp_file2 = user_dir / "clusters_out_95_pre.txt"
-tmp_file3 = user_dir / "clusters_out_90_pre.txt"
-tmp_file4 = user_dir / "clusters_out_80_pre.txt"
-tmp_file_nohits = user_dir / "iupac_out_vsearch.fasta"
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+file = args.cl80uc              # user_dir / "clusters_80_pre.uc"
+tmp_file1 = args.cl97           # user_dir / "clusters_out_97_pre.txt"
+tmp_file2 = args.cl95           # user_dir / "clusters_out_95_pre.txt"
+tmp_file3 = args.cl90           # user_dir / "clusters_out_90_pre.txt"
+tmp_file4 = args.cl80           # user_dir / "clusters_out_80_pre.txt"
+tmp_file_nohits = args.allseqs  # user_dir / "iupac_out_vsearch.fasta"
+log_file = args.log             # user_dir / f"err_{run_id}.log"
 
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 round1_dict = {}
@@ -133,12 +148,13 @@ with open(tmp_file4, "r") as f:
         cluster_seqs = row[2].split(" ")
         if len(cluster_seqs) == 1:
             # singleton cluster
-            singl_file = user_dir / "clusters_pre" / "singletons" / f"Singleton{row[0]}"
+            singl_file = "singletons" / f"Singleton{row[0]}"
             with open(singl_file, "w") as s:
                 s.write(f">{cluster_seqs[0]}\n")
                 s.write(f"{original_seq_dict[cluster_seqs[0]]}\n")
         else:
-            cl_file = user_dir / "clusters_pre" / "clusters" / f"Cluster{row[0]}"
+            cl_file = "clusters" / f"Cluster{row[0]}"
             with open(cl_file, "w") as c:
                 for item in cluster_seqs:
                     c.write(f">{item}\n{original_seq_dict[item]}\n")
+
