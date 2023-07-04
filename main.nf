@@ -334,8 +334,15 @@ workflow {
   // Input file sequences (FASTA)
   ch_input = Channel.value(params.input)
 
+  // Databases
+  ch_db  = Channel.value(params.db)
   // Sequence preparaion
   seq_prep(ch_input)
+
+  // Chimera filtering
+  chimera_filtering(
+    seq_prep.out.unique,
+    ch_db)
 
 }
 
