@@ -273,7 +273,7 @@ process clustering {
 // Final round of sequence clustering (80%),
 // Aggregation of clustering results
 process clustering_final {
-    tag "$threshold"
+
     label "main_container"
 
     // cpus 10
