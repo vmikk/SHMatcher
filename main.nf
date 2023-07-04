@@ -344,6 +344,11 @@ workflow {
     seq_prep.out.unique,
     ch_db)
 
+  // Additional quality controls
+  exclude_non_iupac(
+    chimera_filtering.out.fasta,
+    seq_prep.out.unique)
+
 }
 
 }
