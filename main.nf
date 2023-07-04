@@ -349,6 +349,9 @@ workflow {
     chimera_filtering.out.fasta,
     seq_prep.out.unique)
 
+  // Allow query sequences vary 4% in length at 100% similarity
+  seqlen_variation(exclude_non_iupac.out.iupac96)
+
 
 // On completion
 workflow.onComplete {
