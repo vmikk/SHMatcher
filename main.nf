@@ -358,6 +358,17 @@ workflow {
     exclude_non_iupac.out.iupac)
 
 
+  // 97% pre-clustering
+  // NB. `iupac_out_vsearch.fasta` is used as input twice,
+  //  but we can not use the same channel twice,
+  //  therefore pass "NO_FILE" as the third input,
+  //  and it should be handled by the process
+  no_file = file('NO_FILE')
+  clustering_97(
+    select_representatives.out.fasta,
+    0.97,
+    no_file)
+
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
