@@ -352,6 +352,11 @@ workflow {
   // Allow query sequences vary 4% in length at 100% similarity
   seqlen_variation(exclude_non_iupac.out.iupac96)
 
+  // Selecting representative sequences
+  select_representatives(
+    seqlen_variation.out.seqs,
+    exclude_non_iupac.out.iupac)
+
 
 // On completion
 workflow.onComplete {
