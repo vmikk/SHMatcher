@@ -11,26 +11,28 @@ from pathlib import Path
 from Bio import SeqIO
 
 parser = argparse.ArgumentParser(description="Script to create mapping file for duplicates")
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("--clusters",   default="clusters.txt",   help="Cluster IDs")
+parser.add_argument("--singletons", default="singletons.txt", help="Singleton IDs")
+parser.add_argument("--cov100_uniq", help="")
+parser.add_argument("--cov96_uniq",  help="")
+parser.add_argument("--duplicates", default="duplic_seqs.txt", help="Duplicated sequences")
+parser.add_argument("--log", default="err.log", help="Log file")
+
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
+## infiles
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+tmp_file = args.clusters              # user_dir / "clusters_pre" / "tmp.txt"
+singleton_file = args.singletons      # user_dir / "clusters_pre" / "singletons.txt"
+cov100_uniq_file = args.cov100_uniq   # user_dir / f"source_{run_id}_fastanames"
+cov96_uniq_file = args.cov96_uniq     # user_dir / "clusters_100.uc"
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+## outfiles
+duplic_seqs_file = args.duplicates   # user_dir / "duplic_seqs.txt"
+log_file = args.log                  # user_dir / f"err_{run_id}.log"
 
-# infiles
-tmp_file = user_dir / "clusters_pre" / "tmp.txt"
-singleton_file = user_dir / "clusters_pre" / "singletons.txt"
-cov100_uniq_file = user_dir / f"source_{run_id}_fastanames"
-cov96_uniq_file = user_dir / "clusters_100.uc"
-
-# outfiles
-duplic_seqs_file = user_dir / "duplic_seqs.txt"
-
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
@@ -38,7 +40,7 @@ logging.basicConfig(
     level="INFO",
 )
 
-seq_counter = 0  # sequence count
+seq_counter = 0      # sequence count
 seq_counter_all = 0  # sequence count with duplicates included
 
 # include duplicate sequences (tmp_files/sequences.names)
