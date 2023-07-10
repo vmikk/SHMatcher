@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+## Script to create mapping file for duplicates
+
 import argparse
 import csv
 import logging
@@ -28,7 +32,10 @@ duplic_seqs_file = user_dir / "duplic_seqs.txt"
 
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 seq_counter = 0  # sequence count
@@ -55,7 +62,7 @@ with open(cov96_uniq_file, "r") as f:
         if row[0] == "H":
             if row[9] in cov96_uniq_dict:
                 if row[8] in cov100_uniq_dict:
-                    cov96_uniq_dict[row[9]] = cov96_uniq_dict[row[9]] + "," + row[8] + ","+ cov100_uniq_dict[row[8]]
+                    cov96_uniq_dict[row[9]] = cov96_uniq_dict[row[9]] + "," + row[8] + "," + cov100_uniq_dict[row[8]]
                 else:
                     cov96_uniq_dict[row[9]] = cov96_uniq_dict[row[9]] + "," + row[8]
             else:
@@ -95,7 +102,6 @@ with open(duplic_seqs_file, "w") as dupl:
 
             print("Finished with " + name)
             print("\n\nNumber of sequences at the end: " + str(seq_counter) + "\n\n")
-
 
     # process singletons folder
     with open(singleton_file, "r") as s:
