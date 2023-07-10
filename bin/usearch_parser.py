@@ -87,7 +87,7 @@ with open(duplic_seqs_file, "w") as dupl:
         dataReader = csv.reader(t, delimiter="\t")
         for row in dataReader:
             name = row[0]
-            ex_cl_file = user_dir / "clusters_pre" / "clusters" / name
+            ex_cl_file = os.path.join("clusters", name)
             print("Processing " + name)
             with open(ex_cl_file, "r") as handle:
                 for record in SeqIO.parse(handle, "fasta"):
@@ -111,7 +111,7 @@ with open(duplic_seqs_file, "w") as dupl:
         for row in dataReader:
             name = row[0]
             print("Processing " + name)
-            ex_singleton_file = user_dir / "clusters_pre" / "singletons" / name
+            ex_singleton_file = os.path.join("singletons", name)
             with open(ex_singleton_file, "r") as handle:
                 for record in SeqIO.parse(handle, "fasta"):
                     seq_counter += 1
