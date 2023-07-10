@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+# Script to parse USEARCH clustering output (90) for next step clustering
+
 import argparse
 import csv
 import logging
@@ -30,7 +34,10 @@ tmp_singl_file = user_dir / "clusters_pre" / "clusters" / name_folder / "singlet
 
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 cluster_dict = {}
@@ -71,7 +78,7 @@ with open(tmp_file_nohits, "r") as handle:
         original_seq_dict[record.id] = str(record.seq)
 
 # start dividing clusters into real clusters and singletons in fasta files
-with open (tmp_cl_file, "w") as cl, open(tmp_singl_file, "w") as singl, open(tmp_file1) as f:
+with open(tmp_cl_file, "w") as cl, open(tmp_singl_file, "w") as singl, open(tmp_file1) as f:
     dataReader = csv.reader(f, delimiter="\t")
     for row in dataReader:
         cluster_seqs = row[2].split(" ")
