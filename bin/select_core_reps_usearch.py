@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import csv
 import glob
@@ -8,9 +10,13 @@ import sys
 from Bio import SeqIO
 from pathlib import Path
 
+## Script to select 0.5 percent RepS from usearch calc_distm_+cluster_aggd clustering
+
 csv.field_size_limit(sys.maxsize)
 
-parser = argparse.ArgumentParser(description="Script to select 0.5 percent RepS from usearch calc_distm_+cluster_aggd clustering")
+parser = argparse.ArgumentParser(
+    description="Script to select 0.5 percent RepS from usearch calc_distm_+cluster_aggd clustering"
+)
 parser.add_argument("run_id", help="Need run id in numeric format!")
 args = parser.parse_args()
 
@@ -28,7 +34,10 @@ seq_mappings_file = user_dir / "seq_mappings.txt"
 
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 # Go through usearch clustering results, print out RepS
@@ -81,7 +90,9 @@ with open(reps_outfile, "w") as reps, open(seq_mappings_file, "a") as m:
                             reps.write(">" + str(name) + "\n" + str(seq) + "\n")
             else:
                 tmp_cl_us_out_995_name = row[0] + "_out_005"
-                tmp_cl_us_out_995_file = user_dir / "clusters_pre" / "clusters" / "calc_distm_out" / tmp_cl_us_out_995_name
+                tmp_cl_us_out_995_file = (
+                    user_dir / "clusters_pre" / "clusters" / "calc_distm_out" / tmp_cl_us_out_995_name
+                )
                 cl_count_995_dict = {}
                 with open(tmp_cl_us_out_995_file, "r") as f2:
                     dataReader2 = csv.reader(f2, delimiter="\t")
