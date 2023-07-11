@@ -321,6 +321,29 @@ process clustering_final {
       --allseqs  ${iupac} \
       --log      err.log
 
+    ## List clusters and singletons
+    echo -e "\n..Listing clusters and singletons\n"
+    
+    find clusters -type f -name "Cluster*" \
+      | sed 's/clusters\\///' \
+      | sort --version-sort \
+      > clusters.txt
+
+    find singletons -type f -name "Singleton*" \
+      | sed 's/singletons\\///' \
+      | sort --version-sort \
+      > singletons.txt
+
+    ## Write vsearch clustering duplicates into `duplic_seqs.txt` file
+    echo -e "\n..Parsing results\n"
+    usearch_parser.py \
+      --clusters    clusters.txt \
+      --singletons  singletons.txt \
+      --cov100_uniq ${fastanames} \
+      --cov96_uniq  ${clust100uc} \
+      --duplicates  duplic_seqs.txt \
+      --log err.log
+
     echo -e "..Done"
     """
 }
