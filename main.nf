@@ -396,6 +396,17 @@ workflow {
     0.97,
     no_file)
 
+  // 95% pre-clustering
+  clustering_95(
+    clustering_97.out.fasta,
+    0.95,
+    select_representatives.out.fasta)
+
+  // 90% pre-clustering
+  clustering_90(
+    clustering_95.out.fasta,
+    0.90,
+    select_representatives.out.fasta)
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
