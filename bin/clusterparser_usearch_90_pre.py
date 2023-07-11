@@ -14,25 +14,29 @@ from Bio import SeqIO
 csv.field_size_limit(sys.maxsize)
 
 parser = argparse.ArgumentParser(description="Script to parse USEARCH clustering output (90) for next step clustering")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("name", help="Need cluster name!")
+
+parser.add_argument("--name",            help="Cluster name")
+parser.add_argument("--file",            default="clusters_2_90.uc")
+parser.add_argument("--tmp_file1",       default="clusters_out_2_90_pre.txt")
+parser.add_argument("--tmp_file_nohits", default="iupac_out_vsearch.fasta")
+parser.add_argument("--tmp_cl_file",     default = "tmp.txt")
+parser.add_argument("--tmp_singl_file",  default = "singletons.txt")
+parser.add_argument("--log_file",        default = "err.log")
+
 args = parser.parse_args()
 
 # read in args
-run_id = args.run_id
 name = args.name
 name_folder = name + "_folder"
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-file = user_dir / "clusters_pre" / "clusters_2_90.uc"
-tmp_file1 = user_dir / "clusters_out_2_90_pre.txt"
-tmp_file_nohits = user_dir / "iupac_out_vsearch.fasta"
-tmp_cl_file = user_dir / "clusters_pre" / "clusters" / name_folder / "tmp.txt"
-tmp_singl_file = user_dir / "clusters_pre" / "clusters" / name_folder / "singletons.txt"
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+file = args.file                        # user_dir / "clusters_pre" / "clusters_2_90.uc"
+tmp_file1 = args.tmp_file1              # user_dir / "clusters_out_2_90_pre.txt"
+tmp_file_nohits = args.tmp_file_nohits  # user_dir / "iupac_out_vsearch.fasta"
+tmp_cl_file = args.tmp_cl_file          # user_dir / "clusters_pre" / "clusters" / name_folder / "tmp.txt"
+tmp_singl_file = args.tmp_singl_file    # user_dir / "clusters_pre" / "clusters" / name_folder / "singletons.txt"
+log_file = args.log_file                # user_dir / f"err_{run_id}.log"
 
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
