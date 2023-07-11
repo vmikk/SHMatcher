@@ -284,15 +284,19 @@ process clustering_final {
       path clust97     // clusters_out_97_pre.txt
       path clust95     // clusters_out_95_pre.txt
       path clust90     // clusters_out_90_pre.txt
+      path fastanames  // source_runID_fastanames  // source_fasta_names
+      path clust100uc  // clusters_100.uc
 
     output:
-      path "clusters/*",          emit: clusters
-      path "singletons/*",        emit: singletons
+      path "clusters/*",          emit: clusters,   optional:true
+      path "singletons/*",        emit: singletons, optional:true
       path "clusters_80.uc",      emit: uc80
       path "clusters_out_80.txt", emit: txt80
+      path "clusters.txt",        emit: clusters_list
+      path "singletons.txt",      emit: singletons_list
+      path "duplic_seqs.txt",     emit: duplicates
 
     script:
-
     """
     echo -e "Sequence clustering"
     echo -e "Similarity threshold: 80"
