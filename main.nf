@@ -407,6 +407,17 @@ workflow {
     clustering_95.out.fasta,
     0.90,
     select_representatives.out.fasta)
+
+  // 80% pre-clustering
+  clustering_final(
+    clustering_90.out.fasta,
+    select_representatives.out.fasta,
+    clustering_97.out.txt,
+    clustering_95.out.txt,
+    clustering_90.out.txt,
+    seq_prep.out.namesuniq,
+    seqlen_variation.out.uc
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
