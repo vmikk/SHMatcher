@@ -9,23 +9,21 @@ from pathlib import Path
 import subprocess
 
 parser = argparse.ArgumentParser(description="Script to run usearch single-linkage clustering for 80 percent clusters")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("name", help="Need cluster name!")
+
+parser.add_argument("--uclust", default="clusters",       help="Uclust direcotry")
+parser.add_argument("--out",    default="calc_distm_out", help="Output directory")
+parser.add_argument("--name",    help="Cluster name")
+parser.add_argument("--threads", default=8, help="Number of CPUs")
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-name = args.name
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
+## Infiles
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+uclust_dir = args.uclust    # user_dir / "clusters_pre" / "clusters"
+out_dir = args.out          # uclust_dir / "calc_distm_out"
+threads = args.threads      # 8
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-
-# infiles
-uclust_dir = user_dir / "clusters_pre" / "clusters"
-out_dir = uclust_dir / "calc_distm_out"
-
-usearch_program = "/sh_matching/programs/usearch"
+usearch_program = "usearch"
 
 code = name
 code_url = uclust_dir / code
@@ -36,7 +34,7 @@ out_code_url_005 = out_dir / out_code_005
 
 # usearch -calc_distmx ClusterX -tabbedout mx_005.txt -maxdist 0.005 -threads 8
 usearch_cmd_1 = subprocess.run(
-    [usearch_program, "-calc_distmx", code_url, "-tabbedout", mx_code_url, "-maxdist", "0.005", "-threads", "8"],
+    [usearch_program, "-calc_distmx", code_url, "-tabbedout", mx_code_url, "-maxdist", "0.005", "-threads", threads],
     stdout=subprocess.DEVNULL,
 )
 
