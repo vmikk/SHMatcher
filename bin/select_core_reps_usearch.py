@@ -10,29 +10,31 @@ import sys
 from Bio import SeqIO
 from pathlib import Path
 
-## Script to select 0.5 percent RepS from usearch calc_distm_+cluster_aggd clustering
+## Script to select 0.5 percent RepS from `usearch calc_distm_+cluster_aggd` clustering
 
 csv.field_size_limit(sys.maxsize)
 
 parser = argparse.ArgumentParser(
     description="Script to select 0.5 percent RepS from usearch calc_distm_+cluster_aggd clustering"
 )
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("--cl_list",      default="tmp.txt",        help="List of clusters")
+parser.add_argument("--singl_list",   default="singletons.txt", help="List of singletons")
+parser.add_argument("--reps_outfile", default="core_reps_pre.fasta",     help="Core representative seqs")
+parser.add_argument("--infile_iupac", default="iupac_out_vsearch.fasta", help="IUPAC-filtered sequences")
+parser.add_argument("--seq_mappings", default="seq_mappings.txt", help="Mapping file")
+parser.add_argument("--log_file",     default="err.log", help="Log file")
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+cl_list_file = args.cl_list            # user_dir / "clusters_pre" / "tmp.txt"
+singl_list_file = args.singl_list      # user_dir / "clusters_pre" / "singletons.txt"
+reps_outfile = args.reps_outfile       # user_dir / "core_reps_pre.fasta"
+infile_iupac = args.infile_iupac       # user_dir / "iupac_out_vsearch.fasta"
+seq_mappings_file = args.seq_mappings  # user_dir / "seq_mappings.txt"
+log_file = args.log_file               # user_dir / f"err_{run_id}.log"
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-cl_list_file = user_dir / "clusters_pre" / "tmp.txt"
-singl_list_file = user_dir / "clusters_pre" / "singletons.txt"
-reps_outfile = user_dir / "core_reps_pre.fasta"
-infile_iupac = user_dir / "iupac_out_vsearch.fasta"
-seq_mappings_file = user_dir / "seq_mappings.txt"
-
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
