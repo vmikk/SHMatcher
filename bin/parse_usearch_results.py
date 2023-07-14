@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+## Script to select from max 5 best usearch hits the one with the highest identity)
+
 import argparse
 import csv
 import logging
@@ -7,7 +11,9 @@ from pathlib import Path
 from Bio import SeqIO
 from decimal import Decimal
 
-parser = argparse.ArgumentParser(description="Script to select from max 5 best usearch hits the one with the highest identity)")
+parser = argparse.ArgumentParser(
+    description="Script to select from max 5 best usearch hits the one with the highest identity)"
+)
 parser.add_argument("run_id", help="Need run id in numeric format!")
 args = parser.parse_args()
 
@@ -28,7 +34,10 @@ best_hits_file = user_dir / "closedref.80-best-hits.map.uc"
 # Logging conf
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 full_dict = {}
@@ -68,4 +77,4 @@ with open(outfile1, "w") as o1, open(outfile3, "w") as o3, open(best_hits_file, 
         o1.write(f">{best_match}\n")
         o1.write(f"{full_dict[best_match]}\n")
         bh_string = "\t".join(best_match_dict_full[best_match])
-        bh.write(bh_string +"\n")
+        bh.write(bh_string + "\n")
