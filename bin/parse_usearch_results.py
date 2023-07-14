@@ -14,25 +14,31 @@ from decimal import Decimal
 parser = argparse.ArgumentParser(
     description="Script to select from max 5 best usearch hits the one with the highest identity)"
 )
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("--infile",       default="iupac_out_full.fasta", help="Input fasta")
+parser.add_argument("--hits_fasta",   default="hits.fasta",   help="Output - hits, sequences")
+parser.add_argument("--nohits_fasta", default="nohits.fasta", help="Output - no hits, sequences")
+parser.add_argument("--hits",      default="hits.txt",        help="Output - hits")
+parser.add_argument("--map_file",  default="closedref.80.map.uc",           help="Mapping file")
+parser.add_argument("--best_hits", default="closedref.80-best-hits.map.uc", help="Best hits")
+parser.add_argument("--log",       default="err.log", help="Log file")
+
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-infile = user_dir / "iupac_out_full.fasta"
-outfile1 = user_dir / "hits.fasta"
-outfile2 = user_dir / "nohits.fasta"
-outfile3 = user_dir / "hits.txt"
-map_file = user_dir / "closedref.80.map.uc"
+# Read in args
+## user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+infile   = args.infile       # user_dir / "iupac_out_full.fasta"
+outfile1 = args.hits_fasta   #  user_dir / "hits.fasta"
+outfile2 = args.nohits_fasta #  user_dir / "nohits.fasta"
+outfile3 = args.hits         #  user_dir / "hits.txt"
+map_file = args.map_file     #  user_dir / "closedref.80.map.uc"
 ## print out one best hit for each sequence to create compound clusters in later stage
-best_hits_file = user_dir / "closedref.80-best-hits.map.uc"
+best_hits_file = args.best_hits #  user_dir / "closedref.80-best-hits.map.uc"
+log_file = args.log_file #   user_dir / f"err_{run_id}.log"
 
 # Logging conf
-log_file = user_dir / f"err_{run_id}.log"
+
 logging.basicConfig(
     filename=log_file,
     filemode="a",
