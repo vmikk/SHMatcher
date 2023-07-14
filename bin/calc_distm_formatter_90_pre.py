@@ -10,7 +10,7 @@ import subprocess
 
 parser = argparse.ArgumentParser(description="Script to run usearch single-linkage clustering for 90 percent clusters")
 
-parser.add_argument("--cluster", help="File for clustering")
+parser.add_argument("--cluster",    help="File for clustering")
 parser.add_argument("--uclust_dir", default="clusters",       help="Directory with clusters")
 parser.add_argument("--out_dir",    default="calc_distm_out", help="Output directory")
 parser.add_argument("--cl_tmp",     default="tmp.txt",        help="Temp file with clustering results")
@@ -36,11 +36,12 @@ with open(cl_tmp_file) as f:
     dataReader = csv.reader(f, delimiter="\t")
     for row in dataReader:
         code = row[0]
-        code_url = uclust_dir / name_folder / "clusters" / code
+        # code_url = uclust_dir / name_folder / "clusters" / code
+        code_url = os.path.join("clusters", code)
         mx_code = code + "_mx_03"
-        mx_code_url = out_dir / mx_code
+        mx_code_url = os.path.join(out_dir, mx_code)
         out_code_005 = code + "_out_005"
-        out_code_url_005 = out_dir / out_code_005
+        out_code_url_005 = os.path.join(out_dir, out_code_005)
 
         # usearch -calc_distmx ClusterX -tabbedout mx_005.txt -maxdist 0.005 -threads 8
         usearch_cmd_1 = subprocess.run(
