@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+## Script to create compound clusters for hits
+
 import argparse
 import csv
 import logging
@@ -27,7 +31,10 @@ sh2compound_file = data_dir / "sh2compound_mapping.txt"
 # Logging conf
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 uniques = {}
