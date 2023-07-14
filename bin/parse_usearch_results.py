@@ -35,7 +35,7 @@ outfile3 = args.hits         #  user_dir / "hits.txt"
 map_file = args.map_file     #  user_dir / "closedref.80.map.uc"
 ## print out one best hit for each sequence to create compound clusters in later stage
 best_hits_file = args.best_hits #  user_dir / "closedref.80-best-hits.map.uc"
-log_file = args.log_file #   user_dir / f"err_{run_id}.log"
+log_file = args.log             #  user_dir / f"err_{run_id}.log"
 
 # Logging conf
 
