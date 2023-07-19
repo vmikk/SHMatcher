@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+## Script to parse usearch cl_aggd output
+
 import argparse
 import csv
 import glob
@@ -32,7 +36,10 @@ matches_file = matches_dir / f"matches_{threshold}.txt"
 
 log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
-    filename=log_file, filemode="a", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level="INFO",
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level="INFO",
 )
 
 # read in results from prev version (if singleton, no need to check it again)
@@ -87,7 +94,7 @@ for folder in folder_list:
                 seq_ucl_mapping_dict[row[1]] = f"{compound_name}_out_{threshold}"
     # read in singletons
     s_list_file = f"{folder}/singletons.txt"
-    with open (s_list_file, "r") as l:
+    with open(s_list_file, "r") as l:
         dataReader = csv.reader(l, delimiter="\t")
         for row in dataReader:
             s_file = f"{folder}/singletons/{row[0]}"
@@ -118,15 +125,17 @@ with open(tmp_file) as t:
                             dataReader_bc_90 = csv.reader(bc_90, delimiter="\t")
                             for row_bc_90 in dataReader_bc_90:
                                 if row_bc_90[0] in cl_contents_dict_90:
-                                    cl_contents_dict_90[row_bc_90[0]] = cl_contents_dict_90[row_bc_90[0]] + " " + row_bc_90[1]
+                                    cl_contents_dict_90[row_bc_90[0]] = (
+                                        cl_contents_dict_90[row_bc_90[0]] + " " + row_bc_90[1]
+                                    )
                                 else:
                                     cl_contents_dict_90[row_bc_90[0]] = row_bc_90[1]
-                                
+
                         for key_90 in cl_contents_dict_90:
                             b_90.write(cl_contents_dict_90[key_90] + "\n")
 
                 # include 90% singletons here as well
-                singl_infile_90 = folder_dir / "singletons.txt";
+                singl_infile_90 = folder_dir / "singletons.txt"
                 with open(singl_infile_90) as i_90_s:
                     dataReader_i_90_s = csv.reader(i_90_s, delimiter="\t")
                     for row_i_90_s in dataReader_i_90_s:
@@ -146,7 +155,7 @@ with open(tmp_file) as t:
                         if row_i_80[0] in cl_contents_dict_80:
                             cl_contents_dict_80[row_i_80[0]] = cl_contents_dict_80[row_i_80[0]] + " " + row_i_80[1]
                         else:
-                            cl_contents_dict_80[row_i_80[0]] = row_i_80[1];
+                            cl_contents_dict_80[row_i_80[0]] = row_i_80[1]
                 for key_80 in cl_contents_dict_80:
                     b_90.write(cl_contents_dict_80[key_80] + "\n")
 
@@ -163,15 +172,24 @@ with open(tmp_uc_infile) as t, open(matches_file, "w") as o:
             check_output = None
             if query not in prev_dict:
                 o.write(query + "\t" + subject + "\t")
-                tmp_folder = user_dir / "compounds" / "calc_distm_out" / f"{sh_ucl_dict[subject_sh]}.fas_out_{threshold}_bc"
-                check = subprocess.run(f"grep {query} {tmp_folder} | grep {subject}", shell=True, universal_newlines=True, stdout=subprocess.PIPE)
+                tmp_folder = (
+                    user_dir / "compounds" / "calc_distm_out" / f"{sh_ucl_dict[subject_sh]}.fas_out_{threshold}_bc"
+                )
+                check = subprocess.run(
+                    f"grep {query} {tmp_folder} | grep {subject}",
+                    shell=True,
+                    universal_newlines=True,
+                    stdout=subprocess.PIPE,
+                )
                 check_output = check.stdout.rstrip()
 
                 if check_output and not check_output == "":
                     o.write("present" + "\t" + sh_ucl_dict[subject_sh] + "\t" + "\n")
                 else:
                     bc_tmp_folder = seq_ucl_mapping_dict[query] + "_bc"
-                    check = subprocess.run(f"grep {query} {bc_tmp_folder}", shell=True, universal_newlines=True, stdout=subprocess.PIPE)
+                    check = subprocess.run(
+                        f"grep {query} {bc_tmp_folder}", shell=True, universal_newlines=True, stdout=subprocess.PIPE
+                    )
                     check_output = check.stdout.rstrip()
                     if check_output and not check_output == "":
                         if check_output == query:
