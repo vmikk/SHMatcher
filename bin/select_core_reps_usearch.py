@@ -61,7 +61,7 @@ with open(reps_outfile, "w") as reps, open(seq_mappings_file, "a") as m:
             # go through 995 clusters
             ucl_folder = row[0] + "_folder"
             # folder_dir = user_dir / "clusters_pre" / "clusters" / ucl_folder
-            folder_dir = "clusters" / ucl_folder
+            folder_dir = os.path.join("clusters", ucl_folder)
             if os.path.isdir(folder_dir):
                 glob_match_90 = f"{folder_dir}/clusters/Cluster*"
                 file_list_90 = glob.glob(glob_match_90)
@@ -94,7 +94,7 @@ with open(reps_outfile, "w") as reps, open(seq_mappings_file, "a") as m:
             else:
                 tmp_cl_us_out_995_name = row[0] + "_out_005"
                 # tmp_cl_us_out_995_file = user_dir / "clusters_pre" / "clusters" / "calc_distm_out" / tmp_cl_us_out_995_name
-                tmp_cl_us_out_995_file = "clusters" / "calc_distm_out" / tmp_cl_us_out_995_name
+                tmp_cl_us_out_995_file = os.path.join("calc_distm_out", tmp_cl_us_out_995_name)
                 cl_count_995_dict = {}
                 with open(tmp_cl_us_out_995_file, "r") as f2:
                     dataReader2 = csv.reader(f2, delimiter="\t")
@@ -116,7 +116,7 @@ with open(reps_outfile, "w") as reps, open(seq_mappings_file, "a") as m:
             # go through singletons
             tmp_singl_name = row[0]
             # tmp_singl_file = user_dir / "clusters_pre" / "singletons" / tmp_singl_name
-            tmp_singl_file = "singletons" / tmp_singl_name
+            tmp_singl_file = os.path.join("singletons", tmp_singl_name)
             with open(tmp_singl_file, "r") as handle:
                 for record in SeqIO.parse(handle, "fasta"):
                     name = record.id
