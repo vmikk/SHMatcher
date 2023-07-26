@@ -11,25 +11,27 @@ from pathlib import Path
 from Bio import SeqIO
 
 parser = argparse.ArgumentParser(description="Script to create compound clusters for hits")
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("--datadir", default="sh_matching/data", help="Directory with UNITE data")
+parser.add_argument("--infile", default="iupac_out_full.fasta", help="Input file")
+parser.add_argument("--uc",     default="closedref.80-best-hits.map.uc", help="UC file with matches")
+parser.add_argument("--log",    default="err.log", help="Log file")
+
 args = parser.parse_args()
 
 # read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+data_dir   = args.datadir # Path("/sh_matching/data")
+infile     = args.infile  # user_dir / "iupac_out_full.fasta"
+tmp_infile = args.uc      # user_dir / "closedref.80-best-hits.map.uc"
+log_file   = args.log     # user_dir / f"err_{run_id}.log"
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-data_dir = Path("/sh_matching/data")
-infile = user_dir / "iupac_out_full.fasta"
-tmp_infile = user_dir / "closedref.80-best-hits.map.uc"
-
-sanger_refs_file = data_dir / "sanger_refs_sh_full.fasta"
-compound2seq_file = data_dir / "compound2seq_mapping.txt"
-sh2compound_file = data_dir / "sh2compound_mapping.txt"
+data_dir = Path(data_dir)
+sanger_refs_file  = os.path.join(data_dir, "sanger_refs_sh_full.fasta")
+compound2seq_file = os.path.join(data_dir, "compound2seq_mapping.txt")
+sh2compound_file  = os.path.join(data_dir, "sh2compound_mapping.txt")
 
 # Logging conf
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
