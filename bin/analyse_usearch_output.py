@@ -17,24 +17,38 @@ from Bio import SeqIO
 csv.field_size_limit(sys.maxsize)
 
 parser = argparse.ArgumentParser(description="Script to parse usearch cl_aggd output")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("threshold", help="Need threshold numeric format!")
+
+parser.add_argument("--threshold",   help="Similarity threshold")
+parser.add_argument("--sh2compound", default="data/sh2compound_mapping.txt", help="SH Mapping file from UNITE")
+# parser.add_argument("--matches_dir", default="./matches", help="Directory with matches")
+parser.add_argument("--matches",      help="Matches")
+parser.add_argument("--matches_prev", help="Matches of the previous clustering step")
+
+parser.add_argument("--clusters", default="compounds/tmp.txt", help="List of clusters")
+
+
+parser.add_argument("--log", help="Log file")
+
 args = parser.parse_args()
 
 # read in args
-run_id = args.run_id
 threshold = args.threshold
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+sh2compound_file = args.sh2compound  # "/sh_matching/data/sh2compound_mapping.txt"
+# matches_dir = args.matches_dir     # user_dir / "matches"
+matches_file = args.matches          # matches_dir / f"matches_{threshold}.txt"
+prev_file = args.matches_prev        #
+tmp_file = args.clusters             #  user_dir / "compounds" / "tmp.txt"
+
+glob_match = f"{user_dir}/compounds/calc_distm_out/*.fas_out_{threshold}"
+glob_match_folders = f"{user_dir}/compounds/*_folder"
+tmp_uc_infile = user_dir / "closedref.80-best-hits.map.uc"
+
+log_file = args.log                  # user_dir / f"err_{run_id}.log"
+
 if not threshold.isdigit():
     raise ValueError("Threshold is not numeric", run_id)
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-sh2compound_file = "/sh_matching/data/sh2compound_mapping.txt"
-matches_dir = user_dir / "matches"
-matches_file = matches_dir / f"matches_{threshold}.txt"
-
-log_file = user_dir / f"err_{run_id}.log"
 logging.basicConfig(
     filename=log_file,
     filemode="a",
