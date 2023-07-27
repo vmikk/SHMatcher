@@ -484,6 +484,43 @@ process select_core_reps {
     """
 }
 
+
+// Find best matches to user’s sequences
+// in the existing SH sequence dataset using `usearch_global` algorithm
+process sh_matching {
+
+    label "main_container"
+    cpus 8
+
+    input:
+      path input  // core_reps_pre.fasta
+      path db     // sanger_refs_sh_full.udb
+
+    output:
+      path "closedref.80.map.uc", emit: matches
+
+    script:
+    """
+    echo -e "Matching core reps to existing SH sequence dataset\n"
+
+    echo -e "..Running VSEARCH\n"
+    vsearch \
+      --usearch_global ${input} \
+      --db ${db} \
+      --strand plus \
+      --id 0.8 \
+      --threads ${task.cpus} \
+      --iddef 0 \
+      --gapopen 0I/0E \
+      --gapext 2I/1E \
+      --uc "closedref.80.map.uc" \
+      --maxaccepts 3 \
+      --maxrejects 0
+
+    echo -e "..Done"
+    """
+}
+
 }
 
 
