@@ -451,6 +451,39 @@ process agglomerative_clustering {
     echo -e "..Done"
     """
 }
+
+// Take 0.5% representatives as RepS, add USEARCH singletons
+process select_core_reps {
+
+    label "main_container"
+    // cpus 8
+
+    input:
+      path clusters_list   // clusters.txt     // tmp.txt
+      path singletons_list // singletons.txt
+      path iupac           // iupac_out_vsearch.fasta
+      path (distm, stageAs: "calc_distm_out/*")    // calc_distm_out/*_out_005
+      path (singletons, stageAs: "singletons/*")   // "singletons/Singleton*"
+
+    output:
+      path "core_reps_pre.fasta", emit: corereps
+
+    script:
+    """
+    echo -e "Selecting core representative sequences"
+
+    select_core_reps_usearch.py \
+      --cl_list       ${clusters_list} \
+      --singl_list    ${singletons_list} \
+      --infile_iupac  ${iupac} \
+      --reps_outfile  core_reps_pre.fasta \
+      --seq_mappings  seq_mappings.txt \
+      --log_file      err.log
+
+    echo -e "..Done"
+    """
+}
+
 }
 
 
