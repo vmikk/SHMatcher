@@ -352,6 +352,105 @@ process clustering_final {
     """
 }
 
+
+
+// Go through 80% uclust clusters and run 97% usearch clustering if needed (if >16000 in cluster size)
+// Calculate 0.5% clusters (USEARCH calc_distmx & cluster_aggd)
+process agglomerative_clustering {
+
+    label "main_container"
+    tag "$input"
+    cpus 1
+
+    input:
+      path input    // Cluster0
+      path iupac    // iupac_out_vsearch.fasta
+
+    output:
+      path "*_out_005",   emit: clusters
+      // path "*_mx_005", emit: dist
+
+    script:
+    """
+    echo -e "Usearch single-linkage clustering"
+    echo -e "Input: " ${input}
+
+    ## Count number of sequences in a cluster
+    NUMSEQS="\$(grep -c '>' ${input})"
+    echo -e "Number of sequences in the cluster: " "\$NUMSEQS"\n
+
+    if (( "\$NUMSEQS" > "16000" ))
+    then
+       
+       echo "to be split:"${input}":""\$NUMSEQS"\n
+
+       ## Clustering
+       echo -e "\n..97% clustering\n"
+       usearch \
+         -cluster_fast ${input} \
+         -id 0.97 \
+         -gapopen 0.0/0.0E \
+         -gapext 1.0/0.5E \
+         -sort other \
+         -uc ${input}_clusters_2_90.uc \
+         -threads ${task.cpus}
+       
+       mkdir -p "clusters"
+       mkdir -p "singletons"
+       mkdir -p "calc_distm_out"
+
+       ## Parse usearch clusters
+       echo -e "\n..Parsing USEARCH clustering output\n"
+       clusterparser_usearch_90_pre.py \
+         --name ${input} \
+         --file ${input}_clusters_2_90.uc \
+         --tmp_file1       clusters_out_2_90_pre.txt \
+         --tmp_file_nohits ${iupac} \
+         --tmp_cl_file     tmp.txt \
+         --tmp_singl_file  singletons.txt \
+         --log_file        err.log
+
+       ## Calculate usearch distance matrix
+       echo -e "\n..Single-linkage clustering\n"
+       calc_distm_formatter_90_pre.py \
+         --cluster    ${input} \
+         --uclust_dir clusters \
+         --out_dir    calc_distm_out \
+         --cl_tmp     tmp.txt \
+         --threads    ${task.cpus}
+
+      ## Concatenate clusters
+      find calc_distm_out -name "Cluster*" -exec cat {} + \
+        > ${input}_out_005
+
+    else
+
+      echo "sm:"${input}":""\$NUMSEQS"\n
+
+      ## Calculate usearch distance matrix
+      # calc_distm_formatter_80_pre.py
+
+      ## Generate a distance matrix
+      echo -e "\n..Generating distance matrix\n"
+      usearch \
+        -calc_distmx ${input} \
+        -tabbedout   ${input}_mx_005 \
+        -maxdist     0.005 \
+        -threads     ${task.cpus}
+
+      ## Agglomerative clustering
+      echo -e "\n..Single-linkage clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_005 \
+        -clusterout ${input}_out_005 \
+        -id 0.995 \
+        -linkage min
+
+    fi
+
+    echo -e "..Done"
+    """
+}
 }
 
 
