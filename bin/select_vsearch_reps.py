@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--infile_centroids", default="centroids_100.fasta",     help="Input 1")
 parser.add_argument("--infile_iupac",     default="iupac_out_full.fasta",    help="Input 2")
 parser.add_argument("--outfile",          default="iupac_out_vsearch.fasta", help="Output file name")
+parser.add_argument("--excluded",         default="excluded.txt",            help="Excluded sequences")
 parser.add_argument("--log_file",         default="err.log",                 help="Log file name")
 
 args = parser.parse_args()
@@ -27,6 +28,7 @@ infile_centroids = args.infile_centroids   # user_dir / "centroids_100.fasta"
 infile_iupac     = args.infile_iupac       # user_dir / "iupac_out_full.fasta"
 outfile          = args.outfile            # user_dir / "iupac_out_vsearch.fasta"
 log_file         = args.log_file           # user_dir / f"err_{run_id}.log"
+ex_file          = args.excluded           # user_dir / f"excluded_{run_id}.txt"
 
 # Logging conf
 logging.basicConfig(
@@ -46,7 +48,7 @@ with open(infile_iupac, "r") as handle:
         iupac_full_seqs_dict[record.id] = record.seq
 
 # go through vsearch centroids file to create a new dataset of vsearch representatives
-with open(outfile, "w") as o, open(infile_centroids, "r") as handle:
+with open(ex_file, "a") as ex, open(outfile, "w") as o, open(infile_centroids, "r") as handle:
     for record in SeqIO.parse(handle, "fasta"):
         if record.id in iupac_full_seqs_dict:
             seq_counter += 1
