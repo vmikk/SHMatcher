@@ -56,18 +56,18 @@ logging.basicConfig(
     level="INFO",
 )
 
-# read in results from prev version (if singleton, no need to check it again)
-prev_file = None
-if threshold == "025":
-    prev_file = matches_dir / "matches_03.txt"
-elif threshold == "02":
-    prev_file = matches_dir / "matches_025.txt"
-elif threshold == "015":
-    prev_file = matches_dir / "matches_02.txt"
-elif threshold == "01":
-    prev_file = matches_dir / "matches_015.txt"
-elif threshold == "005":
-    prev_file = matches_dir / "matches_01.txt"
+## Read in results from prev version (if singleton, no need to check it again)
+# prev_file = None
+# if threshold == "025":
+#     prev_file = matches_dir / "matches_03.txt"
+# elif threshold == "02":
+#     prev_file = matches_dir / "matches_025.txt"
+# elif threshold == "015":
+#     prev_file = matches_dir / "matches_02.txt"
+# elif threshold == "01":
+#     prev_file = matches_dir / "matches_015.txt"
+# elif threshold == "005":
+#     prev_file = matches_dir / "matches_01.txt"
 
 prev_dict = {}
 if prev_file:
