@@ -108,7 +108,8 @@ with open(tmp_infile) as tmp_inf:
 
 # print out mapping table
 for key, value in ucl_seq_dict.items():
-    compound_file = user_dir / "compounds" / f"{key}.fas"
+    # compound_file = user_dir / "compounds" / f"{key}.fas"
+    compound_file = os.path.join("compounds", f"{key}.fas")
     with open(compound_file, "w") as c:
         seqs = value.split(",")
         for i, val in enumerate(seqs):
