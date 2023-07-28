@@ -189,6 +189,7 @@ process select_representatives {
 
     output:
       path "iupac_out_vsearch.fasta", emit: fasta
+      path "excluded.txt", emit: excluded, optional: true
 
     script:
     """
@@ -199,6 +200,7 @@ process select_representatives {
       --infile_centroids ${centroids} \
       --infile_iupac     ${iupac} \
       --outfile          iupac_out_vsearch.fasta \
+      --excluded         excluded.txt \
       --log_file         err.log
 
     echo -e "..Done"
