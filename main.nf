@@ -163,7 +163,7 @@ process seqlen_variation {
     vsearch \
       --cluster_fast ${input} \
       --id           1 \
-      --iddef        0 \
+      --iddef        2 \
       --threads      ${task.cpus} \
       --uc           clusters_100.uc \
       --centroids    centroids_100.fasta \
