@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+
 import argparse
 import csv
 import os
 from pathlib import Path
+
+## Script to merge parsed matches output into one file
 
 parser = argparse.ArgumentParser(description="Script to merge parsed matches output into one file")
 parser.add_argument("run_id", help="Need run id in numeric format!")
@@ -52,14 +56,30 @@ with open(outfile, "w") as o:
                         ## status (1.0) SH code (1.0)   SH/compound taxonomy (1.0)    compound_cl_code (1.0)    Compound taxonomy (1.0)
                         if row_ct == 1:
                             # header line, add columns for best hits
-                            one_line_str_dict[row[0]] += row[2] + "\t" + row[3] + "\t" + row[4] + "\t" + row[5] + "\t" + row[6] + "\tMatched sequence\tSimilarity percentage" + "\n"
+                            one_line_str_dict[row[0]] += (
+                                row[2]
+                                + "\t"
+                                + row[3]
+                                + "\t"
+                                + row[4]
+                                + "\t"
+                                + row[5]
+                                + "\t"
+                                + row[6]
+                                + "\tMatched sequence\tSimilarity percentage"
+                                + "\n"
+                            )
                         else:
-                            one_line_str_dict[row[0]] += row[2] + "\t" + row[3] + "\t" + row[4] + "\t" + row[5] + "\t" + row[6]
+                            one_line_str_dict[row[0]] += (
+                                row[2] + "\t" + row[3] + "\t" + row[4] + "\t" + row[5] + "\t" + row[6]
+                            )
                             if row[0] in bh_mapping_dict:
                                 one_line_str_dict[row[0]] += "\t" + bh_mapping_dict[row[0]] + "\t" + bh_sim_dict[row[0]]
                             else:
                                 if row[7] and row[7] in bh_mapping_dict:
-                                    one_line_str_dict[row[0]] += "\t" + bh_mapping_dict[row[7]] + "\t" + bh_sim_dict[row[7]]
+                                    one_line_str_dict[row[0]] += (
+                                        "\t" + bh_mapping_dict[row[7]] + "\t" + bh_sim_dict[row[7]]
+                                    )
                                 else:
                                     one_line_str_dict[row[0]] += "\t" + "\t"
                             one_line_str_dict[row[0]] += "\n"
@@ -88,7 +108,9 @@ with open(outfile, "w") as o:
                                 one_line_str_dict[row[0]] += "\t" + bh_mapping_dict[row[0]] + "\t" + bh_sim_dict[row[0]]
                             else:
                                 if row[5] and row[5] in bh_mapping_dict:
-                                    one_line_str_dict[row[0]] += "\t" + bh_mapping_dict[row[5]] + "\t" + bh_sim_dict[row[5]]
+                                    one_line_str_dict[row[0]] += (
+                                        "\t" + bh_mapping_dict[row[5]] + "\t" + bh_sim_dict[row[5]]
+                                    )
                                 else:
                                     one_line_str_dict[row[0]] += "\t" + "\t"
                             one_line_str_dict[row[0]] += "\n"
