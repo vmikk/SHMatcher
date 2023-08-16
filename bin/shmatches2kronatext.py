@@ -1,8 +1,12 @@
+#!/usr/bin/env python
+
 import argparse
 import csv
 import os
 import subprocess
 from pathlib import Path
+
+## Script to output HTML output for matches
 
 parser = argparse.ArgumentParser(description="Script to output HTML output for matches")
 parser.add_argument("run_id", help="Need run id in numeric format!")
@@ -72,46 +76,93 @@ with open(outfile, "w") as o, open(matches_file) as m:
                                     # family
                                     if taxa_dict[4]:
                                         tax_name_f = tax_name_o + ";" + taxa_dict[4]
-                                        if taxa_dict[4] in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]:
+                                        if (
+                                            taxa_dict[4]
+                                            in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]
+                                        ):
                                             seq_taxon_count[tax_name_f] += 1
                                         else:
-                                            seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][taxa_dict[4]] = {}
+                                            seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][
+                                                taxa_dict[4]
+                                            ] = {}
                                             seq_taxon_count[tax_name_f] = 1
                                         # genus
                                         if taxa_dict[5]:
                                             tax_name_g = tax_name_f + ";" + taxa_dict[5]
-                                            if taxa_dict[5] in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][taxa_dict[4]]:
+                                            if (
+                                                taxa_dict[5]
+                                                in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][
+                                                    taxa_dict[3]
+                                                ][taxa_dict[4]]
+                                            ):
                                                 seq_taxon_count[tax_name_g] += 1
                                             else:
-                                                seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][taxa_dict[4]][taxa_dict[5]] = {}
+                                                seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][
+                                                    taxa_dict[3]
+                                                ][taxa_dict[4]][taxa_dict[5]] = {}
                                                 seq_taxon_count[tax_name_g] = 1
                                             # species
                                             if taxa_dict[6]:
                                                 tax_name_s = tax_name_g + ";" + taxa_dict[6]
-                                                if taxa_dict[6] in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][taxa_dict[4]][taxa_dict[5]]:
+                                                if (
+                                                    taxa_dict[6]
+                                                    in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][
+                                                        taxa_dict[3]
+                                                    ][taxa_dict[4]][taxa_dict[5]]
+                                                ):
                                                     seq_taxon_count[tax_name_s] += 1
                                                 else:
-                                                    seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][taxa_dict[4]][taxa_dict[5]][taxa_dict[6]] = 1
+                                                    seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][
+                                                        taxa_dict[3]
+                                                    ][taxa_dict[4]][taxa_dict[5]][taxa_dict[6]] = 1
                                                     seq_taxon_count[tax_name_s] = 1
                                 else:
                                     # special case for new SHs where compound taxonomy should be parsed
-                                    tax_name_f = taxa_dict[0] + ";" + taxa_dict[1] + ";" + taxa_dict[2] + ";" + taxa_dict[3] + ";f__unspecified"
-                                    if "f__unspecified" in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]:
+                                    tax_name_f = (
+                                        taxa_dict[0]
+                                        + ";"
+                                        + taxa_dict[1]
+                                        + ";"
+                                        + taxa_dict[2]
+                                        + ";"
+                                        + taxa_dict[3]
+                                        + ";f__unspecified"
+                                    )
+                                    if (
+                                        "f__unspecified"
+                                        in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]
+                                    ):
                                         seq_taxon_count[tax_name_f] += 1
                                     else:
-                                        seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]["f__unspecified"] = {}
+                                        seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][
+                                            "f__unspecified"
+                                        ] = {}
                                         seq_taxon_count[tax_name_f] = 1
                                     tax_name_g = tax_name_f + ";g__unspecified"
-                                    if "g__unspecified" in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]["f__unspecified"]:
+                                    if (
+                                        "g__unspecified"
+                                        in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][
+                                            "f__unspecified"
+                                        ]
+                                    ):
                                         seq_taxon_count[tax_name_g] += 1
                                     else:
-                                        seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]["f__unspecified"]["g__unspecified"] = {}
+                                        seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][
+                                            "f__unspecified"
+                                        ]["g__unspecified"] = {}
                                         seq_taxon_count[tax_name_g] = 1
                                     tax_name_s = tax_name_g + ";s__unspecified"
-                                    if "s__unspecified" in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]["f__unspecified"]["g__unspecified"]:
+                                    if (
+                                        "s__unspecified"
+                                        in seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][
+                                            "f__unspecified"
+                                        ]["g__unspecified"]
+                                    ):
                                         seq_taxon_count[tax_name_s] += 1
                                     else:
-                                        seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]]["f__unspecified"]["g__unspecified"]["s__unspecified"] = 1
+                                        seq_taxonomy_dict[taxa_dict[0]][taxa_dict[1]][taxa_dict[2]][taxa_dict[3]][
+                                            "f__unspecified"
+                                        ]["g__unspecified"]["s__unspecified"] = 1
                                         seq_taxon_count[tax_name_s] = 1
     # taxonomy tab
     for kgd in seq_taxonomy_dict:
@@ -121,5 +172,9 @@ with open(outfile, "w") as o, open(matches_file) as m:
                     for fam in seq_taxonomy_dict[kgd][phy][cls][order]:
                         for gen in seq_taxonomy_dict[kgd][phy][cls][order][fam]:
                             for spec in seq_taxonomy_dict[kgd][phy][cls][order][fam][gen]:
-                                tax_name_s = kgd + ";" + phy + ";" + cls + ";" + order + ";" + fam  + ";" + gen + ";" + spec
-                                o.write(f"{seq_taxon_count[tax_name_s]}\t{kgd[3:]}\t{phy[3:]}\t{cls[3:]}\t{order[3:]}\t{fam[3:]}\t{gen[3:]}\t{spec[3:]}\n")
+                                tax_name_s = (
+                                    kgd + ";" + phy + ";" + cls + ";" + order + ";" + fam + ";" + gen + ";" + spec
+                                )
+                                o.write(
+                                    f"{seq_taxon_count[tax_name_s]}\t{kgd[3:]}\t{phy[3:]}\t{cls[3:]}\t{order[3:]}\t{fam[3:]}\t{gen[3:]}\t{spec[3:]}\n"
+                                )
