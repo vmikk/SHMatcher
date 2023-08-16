@@ -470,6 +470,7 @@ process select_core_reps {
 
     output:
       path "core_reps_pre.fasta", emit: corereps
+      path "seq_mappings.txt",    emit: seqmappings
 
     script:
     """
