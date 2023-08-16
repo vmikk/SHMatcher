@@ -8,6 +8,7 @@ params.its_region = "itsfull"  // alternatively, "its2"
 
 params.db     = "sanger_refs_sh.udb"
 params.dbfull = "sanger_refs_sh_full.udb"
+params.shdata = "sh_matching/data"
 
 
 
