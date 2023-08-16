@@ -84,7 +84,6 @@ with open(sh2compound_file) as f:
 
 # read seq ids and their UCL belongings into hash
 seq_ucl_mapping_dict = {}
-glob_match = f"{user_dir}/compounds/calc_distm_out/*.fas_out_{threshold}"
 file_list = glob.glob(glob_match)
 for file in file_list:
     with open(file) as f:
@@ -92,8 +91,9 @@ for file in file_list:
         for row in dataReader:
             seq_ucl_mapping_dict[row[1]] = file
 
-glob_match_folders = f"{user_dir}/compounds/*_folder"
-folder_list = glob.glob(glob_match_folders)
+## glob_match_folders = f"{user_dir}/compounds/*_folder"
+## folder_list = glob.glob(glob_match_folders)
+folder_list = glob.glob("compounds/*_folder")
 for folder in folder_list:
     compound_name = folder[:-7].replace("compounds", "compounds/calc_distm_out")
     # read in clusters
@@ -115,7 +115,6 @@ for folder in folder_list:
                     seq_ucl_mapping_dict[str(record.id)] = f"{compound_name}_out_{threshold}"
 
 # go through usearch output, write out BC style clustering results
-tmp_file = user_dir / "compounds" / "tmp.txt"
 with open(tmp_file) as t:
     dataReader = csv.reader(t, delimiter="\t")
     for row in dataReader:
@@ -172,7 +171,6 @@ with open(tmp_file) as t:
                     b_90.write(cl_contents_dict_80[key_80] + "\n")
 
 # read in best matches (seq and SH)
-tmp_uc_infile = user_dir / "closedref.80-best-hits.map.uc"
 with open(tmp_uc_infile) as t, open(matches_file, "w") as o:
     dataReader = csv.reader(t, delimiter="\t")
     for row in dataReader:
