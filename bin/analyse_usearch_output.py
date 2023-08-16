@@ -18,16 +18,17 @@ csv.field_size_limit(sys.maxsize)
 
 parser = argparse.ArgumentParser(description="Script to parse usearch cl_aggd output")
 
+## Input
 parser.add_argument("--threshold",   help="Similarity threshold")
 parser.add_argument("--sh2compound", default="data/sh2compound_mapping.txt", help="SH Mapping file from UNITE")
+parser.add_argument("--matches_prev", help="Matches of the previous clustering step (used as input at this step)")
+parser.add_argument("--clusters",   default="compounds/tmp.txt", help="List of clusters")
+parser.add_argument("--besthitsuc", default="closedref.80-best-hits.map.uc", help="Resulst of SH-mapping step (UC file)")
+
+## Output
 # parser.add_argument("--matches_dir", default="./matches", help="Directory with matches")
-parser.add_argument("--matches",      help="Matches")
-parser.add_argument("--matches_prev", help="Matches of the previous clustering step")
-
-parser.add_argument("--clusters", default="compounds/tmp.txt", help="List of clusters")
-
-
-parser.add_argument("--log", help="Log file")
+parser.add_argument("--matches",      help="Matches (output of this step)")
+parser.add_argument("--log", default="err.log", help="Log file")
 
 args = parser.parse_args()
 
@@ -39,11 +40,8 @@ sh2compound_file = args.sh2compound  # "/sh_matching/data/sh2compound_mapping.tx
 matches_file = args.matches          # matches_dir / f"matches_{threshold}.txt"
 prev_file = args.matches_prev        #
 tmp_file = args.clusters             #  user_dir / "compounds" / "tmp.txt"
-
-glob_match = f"{user_dir}/compounds/calc_distm_out/*.fas_out_{threshold}"
-glob_match_folders = f"{user_dir}/compounds/*_folder"
-tmp_uc_infile = user_dir / "closedref.80-best-hits.map.uc"
-
+tmp_uc_infile = args.besthitsuc      # user_dir / "closedref.80-best-hits.map.uc"
+glob_match = f"compounds/calc_distm_out/*.fas_out_{threshold}"   # f"{user_dir}/compounds/calc_distm_out/*.fas_out_{threshold}"
 log_file = args.log                  # user_dir / f"err_{run_id}.log"
 
 if not threshold.isdigit():
