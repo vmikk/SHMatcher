@@ -67,6 +67,10 @@ logging.basicConfig(
 # elif threshold == "005":
 #     prev_file = matches_dir / "matches_01.txt"
 
+## No matches for a previos step
+if prev_file == "None":
+    prev_file = None
+
 prev_dict = {}
 if prev_file:
     with open(prev_file) as p:
@@ -119,19 +123,20 @@ with open(tmp_file) as t:
     dataReader = csv.reader(t, delimiter="\t")
     for row in dataReader:
         ucl_code = row[0]
-        folder_dir = user_dir / "compounds" / f"{ucl_code}_folder"
+        ## folder_dir = user_dir / "compounds" / f"{ucl_code}_folder"
+        folder_dir = os.path.join("compounds", f"{ucl_code}_folder")
         # print out clustering results in BC style
-        tmp_bc_file_new = user_dir / "compounds" / "calc_distm_out" / f"{ucl_code}_out_{threshold}_bc"
+        tmp_bc_file_new = os.path.join("compounds", "calc_distm_out", f"{ucl_code}_out_{threshold}_bc")
         with open(tmp_bc_file_new, "w") as b_90:
             if os.path.isdir(folder_dir):
-                tmp_infile_90 = folder_dir / "tmp.txt"
+                tmp_infile_90 = os.path.join(folder_dir, "tmp.txt")
                 with open(tmp_infile_90) as i_90:
                     dataReader_i_90 = csv.reader(i_90, delimiter="\t")
                     for row_i_90 in dataReader_i_90:
                         ucl_code_90 = row_i_90[0]
                         # read in clustering results in usearch style
                         cl_contents_dict_90 = {}
-                        tmp_bc_file_90 = folder_dir / "calc_distm_out" / f"{ucl_code_90}_out_{threshold}"
+                        tmp_bc_file_90 = os.path.join(folder_dir, "calc_distm_out", f"{ucl_code_90}_out_{threshold}")
                         with open(tmp_bc_file_90) as bc_90:
                             dataReader_bc_90 = csv.reader(bc_90, delimiter="\t")
                             for row_bc_90 in dataReader_bc_90:
@@ -146,7 +151,7 @@ with open(tmp_file) as t:
                             b_90.write(cl_contents_dict_90[key_90] + "\n")
 
                 # include 90% singletons here as well
-                singl_infile_90 = folder_dir / "singletons.txt"
+                singl_infile_90 = os.path.join(folder_dir, "singletons.txt")
                 with open(singl_infile_90) as i_90_s:
                     dataReader_i_90_s = csv.reader(i_90_s, delimiter="\t")
                     for row_i_90_s in dataReader_i_90_s:
@@ -157,7 +162,7 @@ with open(tmp_file) as t:
             else:
                 # normal cluster
                 # read in clustering results in usearch style
-                tmp_bc_file = user_dir / "compounds" / "calc_distm_out" / f"{ucl_code}_out_{threshold}"
+                tmp_bc_file = os.path.join("compounds", "calc_distm_out", f"{ucl_code}_out_{threshold}")
                 # print out clustering results in BC style
                 cl_contents_dict_80 = {}
                 with open(tmp_bc_file) as bc_in:
@@ -182,9 +187,7 @@ with open(tmp_uc_infile) as t, open(matches_file, "w") as o:
             check_output = None
             if query not in prev_dict:
                 o.write(query + "\t" + subject + "\t")
-                tmp_folder = (
-                    user_dir / "compounds" / "calc_distm_out" / f"{sh_ucl_dict[subject_sh]}.fas_out_{threshold}_bc"
-                )
+                tmp_folder = os.path.join("compounds", "calc_distm_out", f"{sh_ucl_dict[subject_sh]}.fas_out_{threshold}_bc")
                 check = subprocess.run(
                     f"grep {query} {tmp_folder} | grep {subject}",
                     shell=True,
