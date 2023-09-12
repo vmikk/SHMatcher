@@ -8,18 +8,19 @@ from pathlib import Path
 ## Script to merge parsed matches output into one file
 
 parser = argparse.ArgumentParser(description="Script to merge parsed matches output into one file")
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+parser.add_argument("--matches", default="matches", help="Matches dir")
+parser.add_argument("--outfile", default="matches_out_all.csv", help="Output file")
+parser.add_argument("--besthits", default="closedref.80-best-hits.map.uc", help="UC file with best hits")
+
+## Matches dir must contain  `matches_out_{thld}.csv`
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-matches_dir = user_dir / "matches"
-outfile = matches_dir / f"matches_out_all.csv"
-best_hits_file = user_dir / "closedref.80-best-hits.map.uc"
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+matches_dir    = args.matches    # user_dir / "matches"
+outfile        = args.outfile    # matches_dir / f"matches_out_all.csv"
+best_hits_file = args.besthits   # user_dir / "closedref.80-best-hits.map.uc"
 
 threshold_list = ["03", "025", "02", "015", "01", "005"]
 one_line_str_dict = {}
