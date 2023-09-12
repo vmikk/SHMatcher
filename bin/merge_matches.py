@@ -41,7 +41,7 @@ with open(best_hits_file) as bh:
 # merge threshold-based files
 with open(outfile, "w") as o:
     for thld in threshold_list:
-        matches_file = matches_dir / f"matches_out_{thld}.csv"
+        matches_file = Path(matches_dir) / f"matches_out_{thld}.csv"
         if matches_file.is_file():
             with open(matches_file) as m:
                 dataReader_m = csv.reader(m, delimiter="\t")
@@ -88,7 +88,7 @@ with open(outfile, "w") as o:
                         ## status (2.0) SH code (2.0)   SH/compound taxonomy (2.0)
                         one_line_str_dict[row[0]] += row[2] + "\t" + row[3] + "\t" + row[4] + "\t"
     for thld in threshold_list:
-        matches_1_file = matches_dir / f"matches_1_out_{thld}.csv"
+        matches_1_file = Path(matches_dir) / f"matches_1_out_{thld}.csv"
         if matches_1_file.is_file():
             with open(matches_1_file) as m1:
                 dataReader_m1 = csv.reader(m1, delimiter="\t")
