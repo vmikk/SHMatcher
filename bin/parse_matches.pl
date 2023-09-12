@@ -1,27 +1,56 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use Getopt::Long;
 
-# input data
-my $run_id = $ARGV[0];
-if ($run_id !~ m/^[0-9]{1,}$/) {
-    print "Need correct run id - number!\n";
-    exit;
-}
+# Declare variables to store the default values for named arguments
+my $matches_dir          = "matches";                   # directory with matches
+my $sh2compound_file     = "sh2compound_mapping.txt";
+my $shs_file             = "shs_out.txt";
+my $compound_file        = "compounds_out.txt";
+my $centroid2sh_file     = "centroid2sh_mappings.txt";
+my $accno_seqs_file      = "source_fasta_names";
+my $duplicate_seqs_file1 = "duplic_seqs.txt";
+my $duplicate_seqs_file2 = "seq_mappings.txt";
 
-my $user_dir = "userdir/$run_id";
-my $matches_dir = $user_dir . "/matches";
+# Process command line options (overide defaults)
+GetOptions(
+    "matches_dir=s"          => \$matches_dir,
+    "sh2compound_file=s"     => \$sh2compound_file,
+    "shs_file=s"             => \$shs_file,
+    "compound_file=s"        => \$compound_file,
+    "centroid2sh_file=s"     => \$centroid2sh_file,
+    "accno_seqs_file=s"      => \$accno_seqs_file,
+    "duplicate_seqs_file1=s" => \$duplicate_seqs_file1,
+    "duplicate_seqs_file2=s" => \$duplicate_seqs_file2,
 
-my $sh2compound_file = "/sh_matching/data/sh2compound_mapping.txt";
-my $shs_file = "/sh_matching/data/shs_out.txt";
-my $compound_file = "/sh_matching/data/compounds_out.txt";
-my $centroid2sh_file = "/sh_matching/data/centroid2sh_mappings.txt";
+) or die("Error in command line arguments\n");
 
-my $accno_seqs_file = $user_dir . "/" . "source_" . $run_id . "_names";
-# read in duplicates from vsearch --fastx_uniques and vsearch length coverage clustering (seq_id, parent_seq_id, cluster_name)
-my $duplicate_seqs_file1 = $user_dir . "/" . "duplic_seqs.txt";
-# read in duplicates from 0.5% RepS clustering (RepS_id, duplicate_seq_id)
-my $duplicate_seqs_file2 = $user_dir . "/" . "seq_mappings.txt";
+## Print the specified values on screen
+print "---- Parameters specified\n";
+print "Dir with matches: $matches_dir\n";
+print "sh2compound file: $sh2compound_file\n";
+print "SH file:          $shs_file\n";
+print "Compound file:    $compound_file\n";
+print "centroid2sh file: $centroid2sh_file\n";
+print "Accesion numbers: $accno_seqs_file\n";
+print "Duplicated seqs1: $duplicate_seqs_file1\n";
+print "Seq mapping:      $duplicate_seqs_file2\n";
+print "----\n";
+print "\n";
+
+
+## my $matches_dir = $user_dir . "matches";
+## my $sh2compound_file = "/sh_matching/data/sh2compound_mapping.txt";
+## my $shs_file = "/sh_matching/data/shs_out.txt";
+## my $compound_file = "/sh_matching/data/compounds_out.txt";
+## my $centroid2sh_file = "/sh_matching/data/centroid2sh_mappings.txt";
+## my $accno_seqs_file = $user_dir . "/" . "source_" . $run_id . "_names";
+## # read in duplicates from vsearch --fastx_uniques and vsearch length coverage clustering (seq_id, parent_seq_id, cluster_name)
+## my $duplicate_seqs_file1 = $user_dir . "/" . "duplic_seqs.txt";
+## # read in duplicates from 0.5% RepS clustering (RepS_id, duplicate_seq_id)
+## my $duplicate_seqs_file2 = $user_dir . "/" . "seq_mappings.txt";
+
 
 my %threshold_hash = ("03" => "3.0", "025" => "2.5", "02" => "2.0", "015" => "1.5", "01" => "1.0", "005" => "0.5");
 my %threshold_coded_hash = ("03" => "1", "025" => "4", "02" => "2", "015" => "5", "01" => "3", "005" => "6");
