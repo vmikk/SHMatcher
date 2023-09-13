@@ -18,10 +18,10 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument("--uc",           help="Input UC file")
-parser.add_argument("--clusters_txt", help="clusters_out_97_pre.txt")
-parser.add_argument("--fasta",    default="iupac_out_vsearch.fasta", help="iupac_out_vsearch.fasta")
-parser.add_argument("--output",   help="Output sequences for the next round of clustering")
-parser.add_argument("--log_file", default="err.log", help="Log file")
+parser.add_argument("--fasta",        default="iupac_out_vsearch.fasta", help="iupac_out_vsearch.fasta")
+parser.add_argument("--output",       help="Output sequences for the next round of clustering")
+parser.add_argument("--clusters_txt", default="clusters_out_97_pre.txt", help="Output with cluster list")
+parser.add_argument("--log_file",     default="err.log", help="Log file")
 
 args = parser.parse_args()
 
