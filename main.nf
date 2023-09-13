@@ -525,6 +525,39 @@ process sh_matching {
     """
 }
 
+
+// Parse SH matching results, select best hits
+process parse_sh {
+
+    label "main_container"
+    // cpus 1
+
+    input:
+      path iupac  // iupac_out_full.fasta
+      path uc     // closedref.80.map.uc
+
+    output:
+      path "closedref.80-best-hits.map.uc", emit: matches
+      path "hits.txt",     emit: hits
+      path "hits.fasta",   emit: hits_seq
+      path "nohits.fasta", emit: nohits_seq, optional: true
+
+    script:
+    """
+    echo -e "Parsing results of SH matching\n"
+
+    parse_usearch_results.py \
+      --infile         ${iupac} \
+      --map_file       ${uc} \
+      --hits_fasta     hits.fasta \
+      --nohits_fasta   nohits.fasta \
+      --hits           hits.txt \
+      --best_hits      closedref.80-best-hits.map.uc \
+      --log            err.log
+
+    echo -e "..Done"
+    """
+}
 }
 
 
