@@ -85,9 +85,9 @@ seq_taxon_sh_count = {}
 with open(outfile, "w") as o, open(matches_file) as m:
     # print HTML file header
     o.write(
-        f"<!DOCTYPE html><html>\n{style_tag}\n<head>\n<title>SH matching analysis: source_{run_id}</title>\n<head>\n<body>\n"
+        f"<!DOCTYPE html><html>\n{style_tag}\n<head>\n<title>SH matching analysis</title>\n<head>\n<body>\n"
     )
-    o.write(f"<h5>SH matching analysis: source_{run_id}</h5>\n")
+    o.write(f"<h5>SH matching analysis</h5>\n")
     o.write(f"<span>Distance threshold: {threshold_dict[threshold]}%</span>")
     dataReader_m = csv.reader(m, delimiter="\t")
     row_count = 0
