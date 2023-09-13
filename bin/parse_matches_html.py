@@ -8,23 +8,23 @@ from pathlib import Path
 ## Script to output HTML output for matches
 
 parser = argparse.ArgumentParser(description="Script to output HTML output for matches")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("threshold", help="Need threshold numeric format!")
+
+parser.add_argument("--threshold", default="005", help="Similarity threshold (numeric)")
+parser.add_argument("--matchesdir", default="matches", help="Directory with matches (input)")
+parser.add_argument("--outfile", default="matches_out_005.html", help="Output file")
+
 args = parser.parse_args()
 
 # read in args
-run_id = args.run_id
-threshold = args.threshold
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-if not threshold.isdigit():
-    raise ValueError("Threshold is not numeric", run_id)
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-matches_dir = user_dir / "matches"
-matches_file = matches_dir / f"matches_out_{threshold}.csv"
-matches_1_file = matches_dir / f"matches_1_out_{threshold}.csv"
-outfile = matches_dir / f"matches_out_{threshold}.html"
+threshold = args.threshold
+if not threshold.isdigit():
+    raise ValueError("Threshold is not numeric")
+
+matches_dir = args.matchesdir     # user_dir / "matches"
+matches_file   = Path(matches_dir) / f"matches_out_{threshold}.csv"
+matches_1_file = Path(matches_dir) / f"matches_1_out_{threshold}.csv"
+outfile        = args.outfile   # matches_dir / f"matches_out_{threshold}.html"
 
 style_tag = '<style>\nbody {background-color: #d0dadd; padding: 5px; }\n\
 span, p {color: #333333; font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif; font-style: normal; font-weight: normal; }\n\
