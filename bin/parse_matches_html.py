@@ -39,7 +39,14 @@ a {color: #337ab7}\n\
 .small_text { font-size: 0.9rem; }\
 </style>'
 
-threshold_dict = {"03": "3.0", "025": "2.5", "02": "2.0", "015": "1.5", "01": "1.0", "005": "0.5"}
+threshold_dict = {
+    "03": "3.0",
+    "025": "2.5",
+    "02": "2.0",
+    "015": "1.5",
+    "01": "1.0",
+    "005": "0.5"
+    }
 
 # dicts for statistics div
 # seqs_status_hash = {}
