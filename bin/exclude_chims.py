@@ -18,6 +18,7 @@ parser.add_argument("--outfile",       default="seqs_out_chim.fasta", help="Chim
 parser.add_argument("--log_file",      default="err.log",             help="Log file name")
 parser.add_argument("--ex_file",       default="excluded.txt",        help="Excluded seqs log")
 parser.add_argument("--region",        help="ITS region (either its2 or itsfull)")
+parser.add_argument("--mincoverage",   default=85, type=float, help="Min alignment coverage")
 
 ## TODO:
 # parser.add_argument("--minlen1")
@@ -33,6 +34,7 @@ outfile       = args.outfile        # user_dir / "seqs_out_chim.fasta"
 log_file      = args.log_file       # user_dir / f"err_{run_id}.log"
 ex_file       = args.ex_file        # user_dir / f"excluded_{run_id}.txt"
 region        = args.region
+mincoverage   = args.mincoverage
 
 # Read in args
 if not region == "its2" and not region == "itsfull":
@@ -85,7 +87,7 @@ with open(ex_file, "a") as ex, open(global_infile) as glob:
             perc_alignment_cov = len_alignment * 100 / len_of_query_cov
             perc_alignment_cov_target = len_alignment * 100 / len_of_target_cov
 
-            if perc_alignment_cov <= 85 and perc_alignment_cov_target <= 85:
+            if perc_alignment_cov <= mincoverage and perc_alignment_cov_target <= mincoverage:
                 global_chim_dict[row[0]] = 1
             elif int(row[3]) < len_limit_1 and int(row[7]) >= len_limit_1:
                 global_chim_dict[row[0]] = 1
