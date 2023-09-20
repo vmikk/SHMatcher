@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/shmatcher/master/nextflow_schema.json",
-    "title": "nf-core/shmatcher pipeline parameters",
+    "$id": "https://raw.githubusercontent.com/vmikk/SHMatcher/master/nextflow_schema.json",
+    "title": "SH-Matcher pipeline parameters",
     "description": "Species hypothesis (SH) matching analysis tool",
     "type": "object",
     "definitions": {
