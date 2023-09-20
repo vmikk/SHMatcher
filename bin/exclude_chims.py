@@ -19,10 +19,8 @@ parser.add_argument("--log_file",      default="err.log",             help="Log 
 parser.add_argument("--ex_file",       default="excluded.txt",        help="Excluded seqs log")
 parser.add_argument("--region",        help="ITS region (either its2 or itsfull)")
 parser.add_argument("--mincoverage",   default=85, type=float, help="Min alignment coverage")
-
-## TODO:
-# parser.add_argument("--minlen1")
-# parser.add_argument("--minlen2")
+parser.add_argument("--minlen1", type=int, help="Minimum alignment length (for chimera removal)")
+parser.add_argument("--minlen2", type=int, help="Minimum sequence length (for short sequence removal)")
 
 
 args = parser.parse_args()
@@ -58,6 +56,13 @@ len_limit_2 = 350
 if region == "its2":
     len_limit_1 = 100
     len_limit_2 = 100
+
+# Overriding default values if 'minlen1' and 'minlen2' are specified
+if args.minlen1 is not None:
+    len_limit_1 = args.minlen1
+if args.minlen2 is not None:
+    len_limit_2 = args.minlen2
+
 
 global_chim_dict = {}
 
