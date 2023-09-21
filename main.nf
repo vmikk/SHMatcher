@@ -599,6 +599,154 @@ process compound_clusters {
     """
 }
 
+
+// Go through compound clusters and 
+// run 97% usearch clustering if needed (if >16000 in cluster size)
+// -> calc 3.0% distance matrix to form SHs based on these
+process clustering_compounds {
+
+    label "main_container"
+    tag "$input"
+    cpus 4
+
+    input:
+      path input    // UCL9_*.fas
+      path iupac    // iupac_out_vsearch.fasta
+
+    output:
+      path "calc_distm_out/*_out_*", emit: clusters_small, optional: true   
+      path "*.fas_folder", emit: clusters_large, optional: true
+
+      // "Small" clusters
+      // compounds/calc_distm_out/UCL9_000001.fas_out_*
+
+      // "Large" clusters (in *_folder)
+      // compounds/UCL9_000035.fas_folder/...      
+
+    script:
+    """
+    echo -e "Clustering of compound clusters\n"
+    echo -e "Input: " ${input}
+
+    ## Count number of sequences in a cluster
+    NUMSEQS="\$( grep -c '^>' ${input} || : )"
+    echo -e "Number of sequences in the cluster: " "\$NUMSEQS"\n
+
+    if (( "\$NUMSEQS" > "16000" ))
+    then
+      
+      echo "to be split:"${input}":""\$NUMSEQS"\n
+
+      ## Clustering
+      echo -e "\n..97% clustering\n"
+      usearch \
+        -cluster_fast ${input} \
+        -id 0.97 \
+        -gapopen 0.0/0.0E \
+        -gapext 1.0/0.5E \
+        -sort other \
+        -uc ${input}_clusters_2_90.uc \
+        -threads ${task.cpus}
+
+      mkdir -p "clusters"
+      mkdir -p "singletons"
+      mkdir -p "calc_distm_out"
+
+      ## Parse usearch clusters
+      echo -e "\n..Parsing USEARCH clustering output\n"
+      # clusterparser_usearch_90.py
+      clusterparser_usearch_90_pre.py \
+         --name ${input} \
+         --file ${input}_clusters_2_90.uc \
+         --tmp_file1       clusters_out_2_90_pre.txt \
+         --tmp_file_nohits ${iupac} \
+         --tmp_cl_file     tmp.txt \
+         --tmp_singl_file  singletons.txt \
+         --log_file        err.log
+
+      ## Calculate SHs (max 3.0% distance)
+      ## Calculate usearch distance matrix and generate (SH) clusters
+      calc_distm_formatter_90.py \
+         --cluster    ${input} \
+         --uclust_dir clusters \
+         --out_dir    calc_distm_out \
+         --cl_tmp     tmp.txt \
+         --threads    ${task.cpus}
+
+
+    else
+
+      echo "sm:"${input}":""\$NUMSEQS"\n
+
+      mkdir -p "calc_distm_out"
+
+      ## Calculate usearch distance matrix and generate (SH) clusters
+      # calc_distm_formatter_80.py
+
+      ## Generate a distance matrix
+      echo -e "\n..Generating distance matrix\n"
+      usearch \
+        -calc_distmx ${input} \
+        -tabbedout   ${input}_mx_03 \
+        -maxdist     0.03 \
+        -threads     ${task.cpus}
+
+      ## Agglomerative clustering
+      ## 97.0%
+      echo -e "\n..97.0% clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_03 \
+        -clusterout   calc_distm_out/${input}_out_03 \
+        -id      0.97 \
+        -linkage "min"
+
+      ## 97.5%
+      echo -e "\n..97.5% clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_03 \
+        -clusterout   calc_distm_out/${input}_out_025 \
+        -id      0.975 \
+        -linkage "min"
+
+      ## 98.0%
+      echo -e "\n..98.0% clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_03 \
+        -clusterout   calc_distm_out/${input}_out_02 \
+        -id      0.98 \
+        -linkage "min"
+
+      ## 98.5%
+      echo -e "\n..98.5% clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_03 \
+        -clusterout   calc_distm_out/${input}_out_015 \
+        -id      0.985 \
+        -linkage "min"
+
+      ## 99.0%
+      echo -e "\n..99.0% clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_03 \
+        -clusterout   calc_distm_out/${input}_out_01 \
+        -id      0.99 \
+        -linkage "min"
+
+      ## 99.5%
+      echo -e "\n..99.5% clustering\n"
+      usearch \
+        -cluster_aggd ${input}_mx_03 \
+        -clusterout   calc_distm_out/${input}_out_005 \
+        -id      0.995 \
+        -linkage "min"
+
+    fi
+
+    echo -e "..Done"
+    """
+}
+
+
 }
 
 
