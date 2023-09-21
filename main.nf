@@ -58,7 +58,8 @@ process seq_prep {
     """
 }
 
-// Chimera filtering
+// Sequence filtering
+// putative `chimera` removal based on low similarity to the database
 process chimera_filtering {
 
     label "main_container"
@@ -100,6 +101,9 @@ process chimera_filtering {
       --log_file      err.log \
       --ex_file       excluded.txt \
       --region        ${params.its_region} \
+      --minlen1       ${params.minlen1} \
+      --minlen2       ${params.minlen2} \
+      --mincoverage   ${params.mincoverage}
 
     echo -e "..Done"
 
