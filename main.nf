@@ -855,6 +855,12 @@ workflow {
 
   // Channel with clusters
   ch_clusters = clustering_final.out.clusters.flatten()
+
+  // Distance matrix estimation, agglomerative clustering
+  agglomerative_clustering(
+    ch_clusters,
+    select_representatives.out.fasta
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
