@@ -256,7 +256,7 @@ process clustering {
     echo -e "\n..Parsing clusters\n"
     clusterparser_preclust_pre.py \
       --uc           clusters_${threshold}.uc \
-      --fasta        ${iupacc} \
+      ${iupacc} \
       --clusters_txt clusters_out_${threshold}.txt \
       --output       output_${threshold}.fasta \
       --log_file     err.log
