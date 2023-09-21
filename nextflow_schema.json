@@ -24,8 +24,31 @@
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
+                    "description": "The output directory where the results will be saved.",
+                    "fa_icon": "fas fa-folder-open",
+                    "help_text": "You have to use absolute paths to storage on Cloud infrastructure."
+                },
+                "its_region": {
+                    "type": "string",
+                    "description": "ITS region selector",
+                    "default": "itsfull",
+                    "help_text": "\"itsfull\" or \"its2\""
+                },
+                "db": {
+                    "type": "string",
+                    "description": "Database in UDB format",
+                    "default": "sanger_refs_sh.udb"
+                },
+                "dbfull": {
+                    "type": "string",
+                    "default": "sanger_refs_sh_full.udb",
+                    "description": "Database in UDB format"
+                },
+                "shdata": {
+                    "type": "string",
+                    "default": "sh_matching/data",
+                    "description": "Directory with SH data from UNITE",
+                    "help_text": "- `centroid2sh_mappings.txt`\n- `compound2seq_mapping.txt`\n- `compounds_out.txt`\n- `plutof_taxonomy.txt`\n- `sanger_refs_sh.fasta`\n- `sanger_refs_sh_full.fasta`\n- `sh2compound_mapping.txt`\n- `shs_out.txt`"
                 },
                 "email": {
                     "type": "string",
