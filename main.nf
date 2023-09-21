@@ -558,6 +558,47 @@ process parse_sh {
     echo -e "..Done"
     """
 }
+
+
+// HITS: Create compound clusters (!of core dataset only!)
+// with user's sequences added to the existing data
+process compound_clusters {
+
+    label "main_container"
+    // cpus 1
+
+    input:
+      path datadir // sh_matching/data
+      path iupac   // iupac_out_full.fasta
+      path uc      // closedref.80-best-hits.map.uc
+
+    output:
+      path "compounds/*.fas", emit: compounds
+      path "compounds.txt",   emit: compounds_list   // compounds/tmp.txt
+
+    script:
+    """
+    echo -e "Creating compound clusters of core dataset\n"
+
+    mkdir -p compounds
+
+    echo -e "..Preparing compounds\n"
+    create_compound_clusters.py \
+      --datadir  ${datadir} \
+      --infile   ${iupac} \
+      --uc       ${uc} \
+      --log      err.log \
+
+    echo -e "..Listing clusters\n"
+    find compounds -type f -name "UCL9_*.fas" \
+      | sed 's/compounds\\///' \
+      | sort --version-sort \
+      > compounds.txt
+
+    echo -e "..Done"
+    """
+}
+
 }
 
 
