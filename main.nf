@@ -379,7 +379,7 @@ process agglomerative_clustering {
     echo -e "Input: " ${input}
 
     ## Count number of sequences in a cluster
-    NUMSEQS="\$(grep -c '>' ${input})"
+    NUMSEQS="\$( grep -c '^>' ${input} || : )"
     echo -e "Number of sequences in the cluster: " "\$NUMSEQS"\n
 
     if (( "\$NUMSEQS" > "16000" ))
