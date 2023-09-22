@@ -928,6 +928,19 @@ workflow {
     ch_clusters,
     select_representatives.out.fasta
     )
+
+  // Channel with clustering info
+  ch_distm = agglomerative_clustering.out.clusters.collect()
+
+  // Select representative sequences
+  select_core_reps(
+   clustering_final.out.clusters_list,
+   clustering_final.out.singletons_list,
+   select_representatives.out.fasta,
+   ch_distm,
+   clustering_final.out.singletons
+   )
+
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
