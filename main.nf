@@ -863,7 +863,9 @@ workflow {
   ch_input = Channel.value(params.input)
 
   // Databases
-  ch_db  = Channel.value(params.db)
+  ch_db  = Channel.value(params.db)       // sanger_refs_sh.udb
+  ch_dbf = Channel.value(params.dbfull)   // sanger_refs_sh_full.udb
+  ch_shd = Channel.value(params.shdata)   // sh_matching/data
   // Sequence preparaion
   seq_prep(ch_input)
 
