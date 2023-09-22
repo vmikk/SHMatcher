@@ -829,6 +829,33 @@ process parse_matches {
 }
 
 
+
+// Merge `parse_matches*.pl` output into one CSV file
+process merge_matches {
+
+    label "main_container"
+    // cpus 1
+
+    input:
+      path (matches, stageAs: "matches/*")   // "matches/matches_out_*.csv"
+      path uc                                // "closedref.80-best-hits.map.uc"
+
+    output:
+      path "matches_out_all.csv", emit: matchesall
+
+    script:
+    """
+    echo -e "Meging matches\n"
+
+    merge_matches.py \
+      --matches  "matches" \
+      --besthits ${uc} \
+      --outfile  "matches_out_all.csv"
+
+    echo -e "..Done"
+    """
+}
+
 //  Workflow
 workflow {
       
