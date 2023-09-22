@@ -943,6 +943,11 @@ workflow {
    clustering_final.out.singletons
    )
 
+  // SH matching
+  sh_matching(
+    select_core_reps.out.corereps,
+    ch_dbf
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
