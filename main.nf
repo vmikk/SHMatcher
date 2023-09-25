@@ -1013,6 +1013,13 @@ workflow {
     select_core_reps.out.corereps,
     ch_dbf
     )
+
+  // Parse results, select best hits
+  parse_sh(
+    exclude_non_iupac.out.iupac,
+    sh_matching.out.matches
+    )
+
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
