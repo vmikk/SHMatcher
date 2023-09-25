@@ -884,6 +884,43 @@ process parse_matches_html {
     """
 }
 
+
+// Create Krona chart
+process krona {
+    tag "$threshold"
+    label "main_container"
+    // cpus 1
+
+    input:
+      tuple val(threshold), path (matches, stageAs: "matches/*")
+      // val(threshold)                        // 005                   
+      // path (matches, stageAs: "matches/*")  // matches_out_*.csv
+
+    output:
+      path "krona_*.html",   emit: kronahtml
+      // path "krona_*.txt", emit: kronatxt
+
+    script:
+    """
+    echo -e "Creating Krona charts\n"
+
+    ## Create input for Krona chart
+    shmatches2kronatext.py \
+      --threshold  ${threshold} \
+      --matchesdir matches \
+      --outfile    krona_${threshold}.txt
+
+    ## Export Krona charts
+    ktImportText \
+      -o krona_${threshold}.html \
+      krona_${threshold}.txt
+
+    echo -e "..Done"
+    """
+}
+
+
+
 //  Workflow
 workflow {
       
