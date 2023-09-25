@@ -856,6 +856,34 @@ process merge_matches {
     """
 }
 
+
+// Convert matches into HTML report
+process parse_matches_html {
+    tag "$threshold"
+    label "main_container"
+    // cpus 1
+
+    input:
+      tuple val(threshold), path (matches, stageAs: "matches/*")
+      // val(threshold)                        // 005                   
+      // path (matches, stageAs: "matches/*")  // matches_out_*.csv & matches_1_out_*.csv
+
+    output:
+      path "matches_out_*.html", emit: html
+
+    script:
+    """
+    echo -e "Parsing matches for html output\n"
+
+    parse_matches_html.py \
+      --threshold  ${threshold} \
+      --matchesdir matches \
+      --outfile    matches_out_${threshold}.html
+
+    echo -e "..Done"
+    """
+}
+
 //  Workflow
 workflow {
       
