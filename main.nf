@@ -1020,6 +1020,12 @@ workflow {
     sh_matching.out.matches
     )
 
+  // Create compound clusters of core dataset
+  compound_clusters(
+    ch_shd,
+    exclude_non_iupac.out.iupac,
+    parse_sh.out.matches
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
