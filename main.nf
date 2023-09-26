@@ -1026,6 +1026,15 @@ workflow {
     exclude_non_iupac.out.iupac,
     parse_sh.out.matches
     )
+
+  // Channel with compound clusters
+  ch_compounds = compound_clusters.out.compounds.flatten()
+
+  // Clustering compounds and distance estimation
+  clustering_compounds(
+    ch_compounds,
+    select_representatives.out.fasta
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
