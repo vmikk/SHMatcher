@@ -18,7 +18,7 @@ parser.add_argument("--outfile",       default="seqs_out_chim.fasta", help="Chim
 parser.add_argument("--log_file",      default="err.log",             help="Log file name")
 parser.add_argument("--ex_file",       default="excluded.txt",        help="Excluded seqs log")
 parser.add_argument("--region",        help="ITS region (either its2 or itsfull)")
-parser.add_argument("--mincoverage",   default=85, type=float, help="Min alignment coverage")
+parser.add_argument("--mincoverage",   default=85, type=float, help="Minimum alignment coverage")
 parser.add_argument("--minlen1", type=int, help="Minimum alignment length (for chimera removal)")
 parser.add_argument("--minlen2", type=int, help="Minimum sequence length (for short sequence removal)")
 
