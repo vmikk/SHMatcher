@@ -751,6 +751,16 @@ process clustering_compounds {
 }
 
 
+
+
+// Create parsing module aliases
+// (to reuse the same process code, but chain the input-output of these processes)
+include { analyse_usearch_output as analyse_usearch_output_030 } from './modules/analyse_usearch_output.nf'
+include { analyse_usearch_output as analyse_usearch_output_025 } from './modules/analyse_usearch_output.nf'
+include { analyse_usearch_output as analyse_usearch_output_020 } from './modules/analyse_usearch_output.nf'
+include { analyse_usearch_output as analyse_usearch_output_015 } from './modules/analyse_usearch_output.nf'
+include { analyse_usearch_output as analyse_usearch_output_010 } from './modules/analyse_usearch_output.nf'
+include { analyse_usearch_output as analyse_usearch_output_005 } from './modules/analyse_usearch_output.nf'
 // Parse usearch output
 process analyse_usearch_output {
 
