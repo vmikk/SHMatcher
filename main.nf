@@ -941,6 +941,8 @@ workflow {
   ch_db  = Channel.value(params.db)       // sanger_refs_sh.udb
   ch_dbf = Channel.value(params.dbfull)   // sanger_refs_sh_full.udb
   ch_shd = Channel.value(params.shdata)   // sh_matching/data
+  ch_map = Channel.fromPath( params.shdata + '/sh2compound_mapping.txt' )
+
   // Sequence preparaion
   seq_prep(ch_input)
 
