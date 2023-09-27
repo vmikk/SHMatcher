@@ -1047,6 +1047,26 @@ workflow {
     ch_compounds,
     select_representatives.out.fasta
     )
+
+  // Channels with cluster memberships
+  ch_small_clusters = clustering_compounds.out.clusters_small.collect()
+  ch_large_clusters = clustering_compounds.out.clusters_large.collect()
+
+  ch_small_clusters = ch_small_clusters.ifEmpty(file('NoSmallClusters'))
+  ch_large_clusters = ch_large_clusters.ifEmpty(file('NoLargeClusters'))
+
+  //// Parse usearch output
+  // 3.0%
+  no_prev_match = file('None')
+  analyse_usearch_output_030(
+    "03",
+    ch_map,
+    compound_clusters.out.compounds_list,
+    no_prev_match,
+    ch_small_clusters,
+    ch_large_clusters,
+    parse_sh.out.matches
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
