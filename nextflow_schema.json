@@ -32,25 +32,43 @@
                     "type": "string",
                     "description": "ITS region selector",
                     "default": "itsfull",
-                    "help_text": "\"itsfull\" or \"its2\""
+                    "help_text": "\"itsfull\" or \"its2\"",
+                    "fa_icon": "fas fa-crop-alt"
                 },
                 "db": {
                     "type": "string",
                     "description": "Database in UDB format",
-                    "default": "sanger_refs_sh.udb"
+                    "default": "sanger_refs_sh.udb",
+                    "fa_icon": "fas fa-database"
                 },
                 "dbfull": {
                     "type": "string",
                     "default": "sanger_refs_sh_full.udb",
-                    "description": "Database in UDB format"
+                    "description": "Database in UDB format",
+                    "fa_icon": "fas fa-server"
                 },
                 "shdata": {
                     "type": "string",
                     "default": "sh_matching/data",
                     "description": "Directory with SH data from UNITE",
-                    "help_text": "- `centroid2sh_mappings.txt`\n- `compound2seq_mapping.txt`\n- `compounds_out.txt`\n- `plutof_taxonomy.txt`\n- `sanger_refs_sh.fasta`\n- `sanger_refs_sh_full.fasta`\n- `sh2compound_mapping.txt`\n- `shs_out.txt`"
+                    "help_text": "- `centroid2sh_mappings.txt`\n- `compound2seq_mapping.txt`\n- `compounds_out.txt`\n- `plutof_taxonomy.txt`\n- `sanger_refs_sh.fasta`\n- `sanger_refs_sh_full.fasta`\n- `sh2compound_mapping.txt`\n- `shs_out.txt`",
+                    "fa_icon": "far fa-folder-open"
                 },
+                "mincoverage": {
+                    "type": "number",
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "default": 85,
+                    "description": "Minum alignment coverage"
                 },
+                "minlen1": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler-horizontal",
+                    "description": "Minimum alignment length (for chimera removal)"
+                },
+                "minlen2": {
+                    "type": "integer",
+                    "fa_icon": "fas fa-ruler-vertical",
+                    "description": "Minimum sequence length (for short sequence removal)"
                 }
             }
         },
@@ -105,7 +123,7 @@
         "max_job_request_options": {
             "title": "Max job request options",
             "type": "object",
-            "fa_icon": "fab fa-acquisitions-incorporated",
+            "fa_icon": "fas fa-microchip",
             "description": "Set the top limit for requested resources for any single job.",
             "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
             "properties": {
@@ -219,6 +237,10 @@
                     "description": "Show all params when using `--help`",
                     "hidden": true,
                     "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
+                },
+                "schema_ignore_params": {
+                    "type": "string",
+                    "default": "genomes"
                 }
             }
         }
