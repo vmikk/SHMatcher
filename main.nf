@@ -1067,6 +1067,62 @@ workflow {
     ch_large_clusters,
     parse_sh.out.matches
     )
+
+  // 2.5%
+  analyse_usearch_output_025(
+    "025",
+    ch_map,
+    compound_clusters.out.compounds_list,
+    analyse_usearch_output_030.out.matches,
+    ch_small_clusters,
+    ch_large_clusters,
+    parse_sh.out.matches
+    )
+
+  // 2.0%
+  analyse_usearch_output_020(
+    "02",
+    ch_map,
+    compound_clusters.out.compounds_list,
+    analyse_usearch_output_025.out.matches,
+    ch_small_clusters,
+    ch_large_clusters,
+    parse_sh.out.matches
+    )
+
+  // 1.5%
+  analyse_usearch_output_015(
+    "015",
+    ch_map,
+    compound_clusters.out.compounds_list,
+    analyse_usearch_output_020.out.matches,
+    ch_small_clusters,
+    ch_large_clusters,
+    parse_sh.out.matches
+    )
+
+  // 1.0%
+  analyse_usearch_output_010(
+    "01",
+    ch_map,
+    compound_clusters.out.compounds_list,
+    analyse_usearch_output_015.out.matches,
+    ch_small_clusters,
+    ch_large_clusters,
+    parse_sh.out.matches
+    )
+
+  // 0.5%
+  analyse_usearch_output_005(
+    "005",
+    ch_map,
+    compound_clusters.out.compounds_list,
+    analyse_usearch_output_010.out.matches,
+    ch_small_clusters,
+    ch_large_clusters,
+    parse_sh.out.matches
+    )
+
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
