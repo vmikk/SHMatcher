@@ -1123,6 +1123,20 @@ workflow {
     parse_sh.out.matches
     )
 
+
+  // Parse matches
+  ch_all_matches = analyse_usearch_output_030.out.matches.concat(
+    analyse_usearch_output_025.out.matches,
+    analyse_usearch_output_020.out.matches,
+    analyse_usearch_output_015.out.matches,
+    analyse_usearch_output_010.out.matches,
+    analyse_usearch_output_005.out.matches
+    ).collect()
+
+  ch_map = Channel.fromPath( params.shdata + '/sh2compound_mapping.txt' )
+  ch_shs = Channel.fromPath( params.shdata + '/shs_out.txt' )
+  ch_cmp = Channel.fromPath( params.shdata + '/compounds_out.txt' )
+  ch_cnt = Channel.fromPath( params.shdata + '/centroid2sh_mappings.txt' )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
