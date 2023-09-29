@@ -941,7 +941,7 @@ workflow {
   ch_db  = Channel.value(params.db)       // sanger_refs_sh.udb
   ch_dbf = Channel.value(params.dbfull)   // sanger_refs_sh_full.udb
   ch_shd = Channel.value(params.shdata)   // sh_matching/data
-  ch_map = Channel.fromPath( params.shdata + '/sh2compound_mapping.txt' )
+  ch_map = Channel.fromPath( params.shdata + '/sh2compound_mapping.txt' ).first()
 
   // Sequence preparaion
   seq_prep(ch_input)
@@ -1133,10 +1133,10 @@ workflow {
     analyse_usearch_output_005.out.matches
     ).collect()
 
-  ch_map = Channel.fromPath( params.shdata + '/sh2compound_mapping.txt' )
-  ch_shs = Channel.fromPath( params.shdata + '/shs_out.txt' )
-  ch_cmp = Channel.fromPath( params.shdata + '/compounds_out.txt' )
-  ch_cnt = Channel.fromPath( params.shdata + '/centroid2sh_mappings.txt' )
+  ch_map = Channel.fromPath( params.shdata + '/sh2compound_mapping.txt' ).first()
+  ch_shs = Channel.fromPath( params.shdata + '/shs_out.txt' ).first()
+  ch_cmp = Channel.fromPath( params.shdata + '/compounds_out.txt' ).first()
+  ch_cnt = Channel.fromPath( params.shdata + '/centroid2sh_mappings.txt' ).first()
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
