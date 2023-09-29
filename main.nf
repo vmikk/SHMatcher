@@ -1137,6 +1137,18 @@ workflow {
   ch_shs = Channel.fromPath( params.shdata + '/shs_out.txt' ).first()
   ch_cmp = Channel.fromPath( params.shdata + '/compounds_out.txt' ).first()
   ch_cnt = Channel.fromPath( params.shdata + '/centroid2sh_mappings.txt' ).first()
+
+  parse_matches(
+    ch_all_matches,
+    ch_map,                           // "data/sh2compound_mapping.txt"
+    ch_shs,                           // "data/shs_out.txt"
+    ch_cmp,                           // "data/compounds_out.txt"
+    ch_cnt,                           // "data/centroid2sh_mappings.txt"
+    seq_prep.out.namesuniq,           // "source_fasta_names"
+    clustering_final.out.duplicates,  // "duplic_seqs.txt"
+    select_core_reps.out.seqmappings  // "seq_mappings.txt"
+    )
+
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
