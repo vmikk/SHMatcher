@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## Script to select from max 5 best usearch hits the one with the highest identity)
+## Script to select the best hit with the highest identity (from max 3 best usearch hits)
 
 import argparse
 import csv
@@ -12,7 +12,7 @@ from Bio import SeqIO
 from decimal import Decimal
 
 parser = argparse.ArgumentParser(
-    description="Script to select from max 5 best usearch hits the one with the highest identity)"
+    description="Script to select from max 5 best usearch hits the one with the highest identity"
 )
 
 parser.add_argument("--infile",       default="iupac_out_full.fasta", help="Input fasta")
