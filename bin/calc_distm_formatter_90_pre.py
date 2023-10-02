@@ -47,14 +47,10 @@ with open(cl_tmp_file) as f:
         usearch_cmd_1 = subprocess.run(
             [
                 usearch_program,
-                "-calc_distmx",
-                code_url,
-                "-tabbedout",
-                mx_code_url,
-                "-maxdist",
-                "0.005",
-                "-threads",
-                threads,
+                "-calc_distmx",  code_url,
+                "-tabbedout",    mx_code_url,
+                "-maxdist",      "0.005",
+                "-threads",      threads,
             ],
             stdout=subprocess.DEVNULL,
         )
@@ -63,14 +59,10 @@ with open(cl_tmp_file) as f:
         usearch_cmd_2 = subprocess.run(
             [
                 usearch_program,
-                "-cluster_aggd",
-                mx_code_url,
-                "-clusterout",
-                out_code_url_005,
-                "-id",
-                "0.995",
-                "-linkage",
-                "max",
+                "-cluster_aggd",  mx_code_url,
+                "-clusterout",    out_code_url_005,
+                "-id",            "0.995",
+                "-linkage",       "max",
             ],
             stdout=subprocess.DEVNULL,
         )
