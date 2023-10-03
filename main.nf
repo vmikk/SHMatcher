@@ -658,9 +658,8 @@ process clustering_compounds {
 
       ## Parse usearch clusters
       echo -e "\n..Parsing USEARCH clustering output\n"
-      # clusterparser_usearch_90.py
-      clusterparser_usearch_90_pre.py \
-         --name ${input} \
+      clusterparser_usearch_90.py \
+         --name            ${input} \
          --file ${input}_clusters_2_90.uc \
          --tmp_file1       clusters_out_2_90_pre.txt \
          --tmp_file_nohits ${iupac} \
