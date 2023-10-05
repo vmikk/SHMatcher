@@ -95,13 +95,15 @@ with open(tmp_cl_file, "w") as cl, open(tmp_singl_file, "w") as singl, open(tmp_
         cluster_seqs = row[2].split(" ")
         if len(cluster_seqs) == 1:
             # singleton cluster
-            singl_file = user_dir / "compounds" / name_folder / "singletons" / f"Singleton{row[0]}"
+            # singl_file = user_dir / "compounds" / name_folder / "singletons" / f"Singleton{row[0]}"
+            singl_file = os.path.join("singletons", f"Singleton{row[0]}")
             with open(singl_file, "w") as s:
                 s.write(f">{cluster_seqs[0]}\n")
                 s.write(f"{original_seq_dict[cluster_seqs[0]]}\n")
             singl.write(f"Singleton{row[0]}\n")
         else:
-            cl_file = user_dir / "compounds" / name_folder / "clusters" / f"Cluster{row[0]}"
+            # cl_file = user_dir / "compounds" / name_folder / "clusters" / f"Cluster{row[0]}"
+            cl_file = os.path.join("clusters", f"Cluster{row[0]}")
             with open(cl_file, "w") as c:
                 for item in cluster_seqs:
                     c.write(f">{item}\n{original_seq_dict[item]}\n")
