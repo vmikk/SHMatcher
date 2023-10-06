@@ -2,6 +2,9 @@
 
 # Script to run usearch single-linkage clustering for 90 percent clusters
 
+# Main output is from `usearch -cluster_aggd -clusterout`,
+# It has an `cluster output` file format = tabbed text with two fields: 1. cluster number and 2. label
+
 import argparse
 import csv
 import os
