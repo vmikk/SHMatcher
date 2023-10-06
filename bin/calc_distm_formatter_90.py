@@ -10,25 +10,25 @@ import subprocess
 ## Script to run usearch single-linkage clustering for 90 percent clusters
 
 parser = argparse.ArgumentParser(description="Script to run usearch single-linkage clustering for 90 percent clusters")
-parser.add_argument("run_id", help="Need run id in numeric format!")
-parser.add_argument("name", help="Need cluster name!")
+parser.add_argument("--cluster",    help="File for clustering")
+parser.add_argument("--uclust_dir", default="compounds",       help="Directory with clusters")
+parser.add_argument("--out_dir",    default="calc_distm_out", help="Output directory")
+parser.add_argument("--cl_tmp",     default="tmp.txt",        help="Temp file with clustering results")
+parser.add_argument("--threads",    default=8,                help="CPU threads")
+
 args = parser.parse_args()
 
 # read in args
-run_id = args.run_id
-name = args.name
+name = args.cluster
 name_folder = name + "_folder"
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
 
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+# Infiles
+uclust_dir  = args.uclust_dir # user_dir / "compounds"
+out_dir     = args.out_dir    # uclust_dir / name_folder / "calc_distm_out"
+cl_tmp_file = args.cl_tmp     # uclust_dir / name_folder / "tmp.txt"
+threads     = args.threads    # 8
 
-# infiles
-uclust_dir = user_dir / "compounds"
-out_dir = uclust_dir / name_folder / "calc_distm_out"
-cl_tmp_file = uclust_dir / name_folder / "tmp.txt"
-
-usearch_program = "/sh_matching/programs/usearch"
+usearch_program = "usearch"
 
 # get cluster codes
 with open(cl_tmp_file) as f:
