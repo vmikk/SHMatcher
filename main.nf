@@ -367,7 +367,7 @@ process agglomerative_clustering {
 
     label "main_container"
     tag "$input"
-    cpus 1
+    cpus 6
 
     input:
       path input    // Cluster0
