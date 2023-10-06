@@ -610,7 +610,10 @@ process compound_clusters {
 process clustering_compounds {
 
     label "main_container"
-    tag "$input"
+    
+    // tag "$input"
+    tag "${input.getName().replaceFirst(/.fas$/, "")}"
+    
     cpus 4
 
     input:
