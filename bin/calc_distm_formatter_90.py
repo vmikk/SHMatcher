@@ -35,21 +35,22 @@ with open(cl_tmp_file) as f:
     dataReader = csv.reader(f, delimiter="\t")
     for row in dataReader:
         code = row[0]
-        code_url = uclust_dir / name_folder / "clusters" / code
+        # code_url = uclust_dir / name_folder / "clusters" / code
+        code_url = os.path.join("clusters", code)
         mx_code = code + "_mx_03"
-        mx_code_url = out_dir / mx_code
+        mx_code_url = os.path.join(out_dir, mx_code)
         out_code_03 = code + "_out_03"
-        out_code_url_03 = out_dir / out_code_03
+        out_code_url_03 = os.path.join(out_dir, out_code_03)
         out_code_025 = code + "_out_025"
-        out_code_url_025 = out_dir / out_code_025
+        out_code_url_025 = os.path.join(out_dir, out_code_025)
         out_code_02 = code + "_out_02"
-        out_code_url_02 = out_dir / out_code_02
+        out_code_url_02 = os.path.join(out_dir, out_code_02)
         out_code_015 = code + "_out_015"
-        out_code_url_015 = out_dir / out_code_015
+        out_code_url_015 = os.path.join(out_dir, out_code_015)
         out_code_01 = code + "_out_01"
-        out_code_url_01 = out_dir / out_code_01
+        out_code_url_01 = os.path.join(out_dir, out_code_01)
         out_code_005 = code + "_out_005"
-        out_code_url_005 = out_dir / out_code_005
+        out_code_url_005 = os.path.join(out_dir, out_code_005)
 
         # usearch -calc_distmx ClusterX -tabbedout mx_03.txt -maxdist 0.03 -threads 8
         usearch_cmd_1 = subprocess.run(
