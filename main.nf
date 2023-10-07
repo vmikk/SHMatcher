@@ -679,6 +679,47 @@ process clustering_compounds {
          --cl_tmp     tmp.txt \
          --threads    ${task.cpus}
 
+      ## Merge clusters
+      echo -e "\n..Merging sub-clusters\n"
+      mv calc_distm_out calc_distm_out_subcl
+      mkdir -p calc_distm_out
+
+      echo -e "...0.5%\n"
+      find calc_distm_out_subcl -regex "calc_distm_out_subcl/Cluster[0-9]+_out_005\$" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
+        > calc_distm_out/${input}_out_005
+
+      echo -e "...1.0%\n"
+      find calc_distm_out_subcl -regex "calc_distm_out_subcl/Cluster[0-9]+_out_01\$" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
+        > calc_distm_out/${input}_out_01
+
+      echo -e "...1.5%\n"
+      find calc_distm_out_subcl -regex "calc_distm_out_subcl/Cluster[0-9]+_out_015\$" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
+        > calc_distm_out/${input}_out_015
+
+      echo -e "...2.0%\n"
+      find calc_distm_out_subcl -regex "calc_distm_out_subcl/Cluster[0-9]+_out_02\$" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
+        > calc_distm_out/${input}_out_02
+
+      echo -e "...2.5%\n"
+      find calc_distm_out_subcl -regex "calc_distm_out_subcl/Cluster[0-9]+_out_025\$" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
+        > calc_distm_out/${input}_out_025
+
+      echo -e "...3.0%\n"
+      find calc_distm_out_subcl -regex "calc_distm_out_subcl/Cluster[0-9]+_out_03\$" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
+        > calc_distm_out/${input}_out_03
+
 
     else
 
