@@ -11,7 +11,6 @@ process analyse_usearch_output {
       path compounds     // compounds/tmp.txt
       path matches_prev
       path (small_clusters, stageAs: "compounds/calc_distm_out/*")   // compounds/calc_distm_out/*.fas_out_threshold
-      path (large_clusters, stageAs: "compounds/*")                  // compounds/UCL9_000035.fas_folder/...
       path best_hits_uc  // closedref.80-best-hits.map.uc
 
     output:
