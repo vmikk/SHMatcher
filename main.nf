@@ -1050,12 +1050,9 @@ workflow {
     select_representatives.out.fasta
     )
 
-  // Channels with cluster memberships
-  ch_small_clusters = clustering_compounds.out.clusters_small.collect()
-  ch_large_clusters = clustering_compounds.out.clusters_large.collect()
+  // Channel with cluster memberships
+  ch_compclusters = clustering_compounds.out.clusters.collect()
 
-  ch_small_clusters = ch_small_clusters.ifEmpty(file('NoSmallClusters'))
-  ch_large_clusters = ch_large_clusters.ifEmpty(file('NoLargeClusters'))
 
   //// Parse usearch output
   // 3.0%
@@ -1065,8 +1062,7 @@ workflow {
     ch_map,
     compound_clusters.out.compounds_list,
     no_prev_match,
-    ch_small_clusters,
-    ch_large_clusters,
+    ch_compclusters,
     parse_sh.out.matches
     )
 
@@ -1076,8 +1072,7 @@ workflow {
     ch_map,
     compound_clusters.out.compounds_list,
     analyse_usearch_output_030.out.matches,
-    ch_small_clusters,
-    ch_large_clusters,
+    ch_compclusters,
     parse_sh.out.matches
     )
 
@@ -1087,8 +1082,7 @@ workflow {
     ch_map,
     compound_clusters.out.compounds_list,
     analyse_usearch_output_025.out.matches,
-    ch_small_clusters,
-    ch_large_clusters,
+    ch_compclusters,
     parse_sh.out.matches
     )
 
@@ -1098,8 +1092,7 @@ workflow {
     ch_map,
     compound_clusters.out.compounds_list,
     analyse_usearch_output_020.out.matches,
-    ch_small_clusters,
-    ch_large_clusters,
+    ch_compclusters,
     parse_sh.out.matches
     )
 
@@ -1109,8 +1102,7 @@ workflow {
     ch_map,
     compound_clusters.out.compounds_list,
     analyse_usearch_output_015.out.matches,
-    ch_small_clusters,
-    ch_large_clusters,
+    ch_compclusters,
     parse_sh.out.matches
     )
 
@@ -1120,8 +1112,7 @@ workflow {
     ch_map,
     compound_clusters.out.compounds_list,
     analyse_usearch_output_010.out.matches,
-    ch_small_clusters,
-    ch_large_clusters,
+    ch_compclusters,
     parse_sh.out.matches
     )
 
