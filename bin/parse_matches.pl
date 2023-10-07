@@ -9,7 +9,7 @@ my $sh2compound_file     = "sh2compound_mapping.txt";
 my $shs_file             = "shs_out.txt";
 my $compound_file        = "compounds_out.txt";
 my $centroid2sh_file     = "centroid2sh_mappings.txt";
-my $accno_seqs_file      = "source_fasta_names";
+my $accno_seqs_file      = "source_names";
 my $duplicate_seqs_file1 = "duplic_seqs.txt";
 my $duplicate_seqs_file2 = "seq_mappings.txt";
 
