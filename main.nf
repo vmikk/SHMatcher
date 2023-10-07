@@ -812,7 +812,7 @@ process parse_matches {
       path shs_out              // "/sh_matching/data/shs_out.txt"
       path compounds_out        // "/sh_matching/data/compounds_out.txt"
       path centroid2sh_mappings // "/sh_matching/data/centroid2sh_mappings.txt"
-      path source_fasta_names   // "source_fasta_names"
+      path source_names         // "source_names"
       path duplic_seqs          // "duplic_seqs.txt"
       path seq_mappings         // "seq_mappings.txt"
 
@@ -829,7 +829,7 @@ process parse_matches {
       --shs_file             ${shs_out} \
       --compound_file        ${compounds_out} \
       --centroid2sh_file     ${centroid2sh_mappings} \
-      --accno_seqs_file      ${source_fasta_names} \
+      --accno_seqs_file      ${source_names} \
       --duplicate_seqs_file1 ${duplic_seqs} \
       --duplicate_seqs_file2 ${seq_mappings}
 
