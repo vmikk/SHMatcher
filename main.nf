@@ -1137,7 +1137,7 @@ workflow {
     ch_shs,                           // "data/shs_out.txt"
     ch_cmp,                           // "data/compounds_out.txt"
     ch_cnt,                           // "data/centroid2sh_mappings.txt"
-    seq_prep.out.namesuniq,           // "source_fasta_names"
+    seq_prep.out.namesorig,           // "source_names"
     clustering_final.out.duplicates,  // "duplic_seqs.txt"
     select_core_reps.out.seqmappings  // "seq_mappings.txt"
     )
