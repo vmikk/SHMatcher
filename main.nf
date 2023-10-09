@@ -1194,6 +1194,28 @@ workflow {
     ch_all_matches,         // "matches/matches_out_{thld}.csv"
     parse_sh.out.matches    // "closedref.80-best-hits.map.uc"
     )
+
+  // Channel with threshold values
+  ch_thresholds = Channel.fromList( ['005', '01', '015', '02', '025', '03'] )
+  
+  // Combine thresholds and matches into tuples
+  // (to reuse value of `ch_all_matches`)
+  ch_threshold_match = ch_thresholds.combine(ch_all_matches.toList())
+
+    // ch_threshold_match.view()
+    //  [005, [matches_out_005.csv, matches_out_01.csv, matches_out_015.csv, matches_out_02.csv, matches_out_025.csv, matches_out_03.csv]]
+    //  [01,  [matches_out_005.csv, matches_out_01.csv, matches_out_015.csv, matches_out_02.csv, matches_out_025.csv, matches_out_03.csv]]
+    //  [015, [matches_out_005.csv, matches_out_01.csv, matches_out_015.csv, matches_out_02.csv, matches_out_025.csv, matches_out_03.csv]]
+    //  [02,  [matches_out_005.csv, matches_out_01.csv, matches_out_015.csv, matches_out_02.csv, matches_out_025.csv, matches_out_03.csv]]
+    //  [025, [matches_out_005.csv, matches_out_01.csv, matches_out_015.csv, matches_out_02.csv, matches_out_025.csv, matches_out_03.csv]]
+    //  [03,  [matches_out_005.csv, matches_out_01.csv, matches_out_015.csv, matches_out_02.csv, matches_out_025.csv, matches_out_03.csv]]
+
+  // Convert matches into HTML report
+  parse_matches_html(ch_threshold_match)
+
+}
+
+
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
