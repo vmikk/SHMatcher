@@ -1183,6 +1183,17 @@ workflow {
     select_core_reps.out.seqmappings  // "seq_mappings.txt"
     )
 
+
+  // Channel with matches
+  ch_all_matches = parse_matches.out.shmatches
+  // TODO - add `matches_1_out_*` from parse_matches_1 [ NOHITS part ]
+  // ch_all_matches = parse_matches.out.shmatches + nohit_clusters...
+
+  // Merge matches
+  merge_matches(
+    ch_all_matches,         // "matches/matches_out_{thld}.csv"
+    parse_sh.out.matches    // "closedref.80-best-hits.map.uc"
+    )
 // On completion
 workflow.onComplete {
     println "Pipeline completed at : $workflow.complete"
