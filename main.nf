@@ -362,7 +362,7 @@ process clustering_final {
 
 
 // Go through 80% uclust clusters and run 97% usearch clustering if needed (if >16000 in cluster size)
-// Calculate 0.5% clusters (USEARCH calc_distmx & cluster_aggd)
+// Calculate 0.5% clusters (USEARCH calc_distmx & cluster_aggd, complete-linkage)
 process agglomerative_clustering {
 
     label "main_container"
@@ -379,7 +379,7 @@ process agglomerative_clustering {
 
     script:
     """
-    echo -e "Usearch single-linkage clustering"
+    echo -e "Usearch complete-linkage clustering"
     echo -e "Input: " ${input}
 
     ## Count number of sequences in a cluster
@@ -418,7 +418,7 @@ process agglomerative_clustering {
          --log_file        err.log
 
        ## Calculate usearch distance matrix
-       echo -e "\n..Single-linkage clustering\n"
+       echo -e "\n..Complete-linkage clustering of sub-clusters\n"
        calc_distm_formatter_90_pre.py \
          --cluster    ${input} \
          --uclust_dir clusters \
@@ -446,18 +446,19 @@ process agglomerative_clustering {
         -threads     ${task.cpus}
 
       ## Agglomerative clustering
-      echo -e "\n..Single-linkage clustering\n"
+      echo -e "\n..Complete-linkage clustering\n"
       usearch \
         -cluster_aggd ${input}_mx_005 \
         -clusterout ${input}_out_005 \
         -id 0.995 \
-        -linkage min
+        -linkage max
 
     fi
 
     echo -e "..Done"
     """
 }
+
 
 // Take 0.5% representatives as RepS, add USEARCH singletons
 process select_core_reps {
