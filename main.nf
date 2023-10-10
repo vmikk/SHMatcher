@@ -1215,6 +1215,10 @@ workflow {
   // Convert matches into HTML report
   parse_matches_html(ch_threshold_match)
 
+  // Create Krona charts
+  krona(ch_threshold_match)
+
+
 }
 
 
