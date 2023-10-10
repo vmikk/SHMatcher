@@ -673,6 +673,7 @@ process clustering_compounds {
 
       ## Calculate SHs (max 3.0% distance)
       ## Calculate usearch distance matrix and generate (SH) clusters
+      echo -e "\n..Calculating SHs, single-linkage clustering\n"
       calc_distm_formatter_90.py \
          --cluster    ${input} \
          --uclust_dir clusters \
@@ -739,7 +740,7 @@ process clustering_compounds {
         -maxdist     0.03 \
         -threads     ${task.cpus}
 
-      ## Agglomerative clustering
+      ## Agglomerative clustering (single-linkage)
       ## 97.0%
       echo -e "\n..97.0% clustering\n"
       usearch \
