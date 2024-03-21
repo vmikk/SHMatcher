@@ -595,7 +595,7 @@ process compound_clusters {
       --log      err.log \
 
     echo -e "..Listing clusters\n"
-    find compounds -type f -name "UCL9_*.fas" \
+    find compounds -type f -name "UCL10_*.fas" \
       | sed 's/compounds\\///' \
       | sort --version-sort \
       > compounds.txt
@@ -618,7 +618,7 @@ process clustering_compounds {
     cpus 4
 
     input:
-      path input    // UCL9_*.fas
+      path input    // UCL10_*.fas
       path iupac    // iupac_out_vsearch.fasta
 
     output:
@@ -818,7 +818,7 @@ process analyse_usearch_output {
       path compounds     // compounds/tmp.txt
       path matches_prev
       path (small_clusters, stageAs: "compounds/calc_distm_out/*")   // compounds/calc_distm_out/*.fas_out_threshold
-      path (large_clusters, stageAs: "compounds/*")                  // compounds/UCL9_000035.fas_folder/...
+      path (large_clusters, stageAs: "compounds/*")                  // compounds/UCL10_000035.fas_folder/...
       path best_hits_uc  // closedref.80-best-hits.map.uc
     
     output:
