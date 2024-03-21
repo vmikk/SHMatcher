@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Script to run usearch single-linkage clustering for 90 percent clusters
+# Script to run usearch complete-linkage clustering for 90 percent clusters
 
 # Main output is from `usearch -cluster_aggd -clusterout`,
 # It has an `cluster output` file format = tabbed text with two fields: 1. cluster number and 2. label
@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 
-parser = argparse.ArgumentParser(description="Script to run usearch single-linkage clustering for 90 percent clusters")
+parser = argparse.ArgumentParser(description="Script to run usearch complete-linkage clustering for 90 percent clusters")
 
 parser.add_argument("--cluster",    help="File for clustering")
 parser.add_argument("--uclust_dir", default="clusters",       help="Directory with clusters")
@@ -58,7 +58,7 @@ with open(cl_tmp_file) as f:
             stdout=subprocess.DEVNULL,
         )
 
-        # usearch -cluster_aggd mx_005.txt -clusterout clusters.txt -id 0.995 -linkage min
+        # usearch -cluster_aggd mx_005.txt -clusterout clusters.txt -id 0.995 -linkage max
         usearch_cmd_2 = subprocess.run(
             [
                 usearch_program,

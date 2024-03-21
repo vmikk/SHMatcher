@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Script to run usearch single-linkage clustering for 80 percent clusters
+# Script to run usearch complete-linkage clustering for 80 percent clusters
 
 import argparse
 import csv
@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 import subprocess
 
-parser = argparse.ArgumentParser(description="Script to run usearch single-linkage clustering for 80 percent clusters")
+parser = argparse.ArgumentParser(description="Script to run usearch complete-linkage clustering for 80 percent clusters")
 
 parser.add_argument("--uclust", default="clusters",       help="Uclust direcotry")
 parser.add_argument("--out",    default="calc_distm_out", help="Output directory")
@@ -38,7 +38,7 @@ usearch_cmd_1 = subprocess.run(
     stdout=subprocess.DEVNULL,
 )
 
-# usearch -cluster_aggd mx_005.txt -clusterout clusters.txt -id 0.995 -linkage min
+# usearch -cluster_aggd mx_005.txt -clusterout clusters.txt -id 0.995 -linkage max
 usearch_cmd_1 = subprocess.run(
     [usearch_program, "-cluster_aggd", mx_code_url, "-clusterout", out_code_url_005, "-id", "0.995", "-linkage", "max"],
     stdout=subprocess.DEVNULL,
