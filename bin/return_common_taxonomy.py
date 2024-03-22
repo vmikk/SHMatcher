@@ -1,21 +1,25 @@
+#!/usr/bin/env python
+
+## Script to calculate single common taxonomy for all matches
+
 import argparse
 import csv
 import os
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description="Script to calculate single common taxonomy for all matches")
-parser.add_argument("run_id", help="Need run id in numeric format!")
+
+# Read in args
+parser.add_argument("--matches", default="matches",                     help="")
+parser.add_argument("--infile",  default="matches_out_all.csv",      help="Input file")
+parser.add_argument("--outfile", default="matches_out_taxonomy.csv", help="Output file")
+
 args = parser.parse_args()
 
-# read in args
-run_id = args.run_id
-if not run_id.isdigit():
-    raise ValueError("Run id is not numeric", run_id)
-
-user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
-matches_dir = user_dir / "matches"
-infile = matches_dir / f"matches_out_all_v9.csv"
-outfile = matches_dir / f"matches_out_taxonomy_v9.csv"
+# user_dir = Path(f"{os.getcwd()}/userdir/{run_id}")
+matches_dir = args.matches  # user_dir / "matches"
+infile      = args.infile   # matches_dir / f"matches_out_all.csv"
+outfile     = args.outfile  # matches_dir / f"matches_out_taxonomy.csv"
 
 with open(infile) as bh, open(outfile, "w") as o:
     # print header
@@ -81,7 +85,7 @@ with open(infile) as bh, open(outfile, "w") as o:
                 th_taxonomy_dict[6]["phy"] = lineage_05_arr[1][3:]
             if len(lineage_05_arr) > 0 and not lineage_05_arr[0] == "k__unspecified":
                 th_taxonomy_dict[6]["kgd"] = lineage_05_arr[0][3:]
-            
+
             lineage_10_arr = row[16].split(";")
             if len(lineage_10_arr) == 7 and not lineage_10_arr[6] == "s__unspecified":
                 th_taxonomy_dict[3]["spe"] = lineage_10_arr[6][3:]
@@ -129,7 +133,7 @@ with open(infile) as bh, open(outfile, "w") as o:
                 th_taxonomy_dict[2]["phy"] = lineage_20_arr[1][3:]
             if len(lineage_20_arr) > 0 and not lineage_20_arr[0] == "k__unspecified":
                 th_taxonomy_dict[2]["kgd"] = lineage_20_arr[0][3:]
-            
+
             lineage_25_arr = row[7].split(";")
             if len(lineage_25_arr) == 7 and not lineage_25_arr[6] == "s__unspecified":
                 th_taxonomy_dict[4]["spe"] = lineage_25_arr[6][3:]
@@ -145,7 +149,7 @@ with open(infile) as bh, open(outfile, "w") as o:
                 th_taxonomy_dict[4]["phy"] = lineage_25_arr[1][3:]
             if len(lineage_25_arr) > 0 and not lineage_25_arr[0] == "k__unspecified":
                 th_taxonomy_dict[4]["kgd"] = lineage_25_arr[0][3:]
-            
+
             lineage_30_arr = row[4].split(";")
             if len(lineage_30_arr) == 7 and not lineage_30_arr[6] == "s__unspecified":
                 th_taxonomy_dict[1]["spe"] = lineage_30_arr[6][3:]
@@ -161,7 +165,7 @@ with open(infile) as bh, open(outfile, "w") as o:
                 th_taxonomy_dict[1]["phy"] = lineage_30_arr[1][3:]
             if len(lineage_30_arr) > 0 and not lineage_30_arr[0] == "k__unspecified":
                 th_taxonomy_dict[1]["kgd"] = lineage_30_arr[0][3:]
-            
+
             conflict_flag = False
             common_anc_taxonomy = ""
             if "spe" in th_taxonomy_dict[6]:
@@ -227,7 +231,7 @@ with open(infile) as bh, open(outfile, "w") as o:
                     if conflict_flag == False:
                         common_anc_taxonomy = "k__" + th_taxonomy_dict[6]["kgd"] + ";p__" + th_taxonomy_dict[6]["phy"] + ";c__" + th_taxonomy_dict[6]["cls"] + ";o__" + th_taxonomy_dict[6]["ord"] + ";f__" + th_taxonomy_dict[6]["fam"] + ";g__" + th_taxonomy_dict[6]["gen"]
                         common_rank = 6
-                        
+
                     if conflict_flag == False:
                         # case-1. if 0.5% species present and higher taxa not in conflict with 1.0-3.0 level taxonomy:
                         #         -> use 0.5% taxonomy:species
