@@ -178,7 +178,7 @@ process seqlen_variation {
     script:
     """
     echo "Running vsearch 100% clustering"
-    
+
     vsearch \
       --cluster_fast ${input} \
       --id           1 \
@@ -194,6 +194,35 @@ process seqlen_variation {
     """
 }
 
+
+// Skipping the vsearch 100% clustering step with 96% length coverage
+process no_seqlen_variation {
+
+    label "main_container"
+
+    cpus 8
+
+    input:
+      path input   // iupac_out_vsearch_96.fasta
+
+    output:
+      path "centroids_100.fasta", emit: seqs
+      path "clusters_100.uc",     emit: uc
+
+    script:
+    """
+    echo "Running vsearch fastx_uniques"
+
+    vsearch \
+      --fastx_uniques ${input} \
+      --threads       ${task.cpus} \
+      --uc            clusters_100.uc \
+      --fastaout      centroids_100.fasta
+
+    echo -e "..Done"
+
+    """
+}
 
 // Prepare representative sequences
 process select_representatives {
@@ -213,7 +242,7 @@ process select_representatives {
     script:
     """
     echo "Printing out vsearch representatives"
-    
+
     ## vsearch representatives (the sequence count diff. is 9.5% for vsearch 4%)
     select_vsearch_reps.py \
       --infile_centroids ${centroids} \
@@ -348,7 +377,7 @@ process clustering_final {
 
     ## List clusters and singletons
     echo -e "\n..Listing clusters and singletons\n"
-    
+
     find clusters -type f -name "Cluster*" \
       | sed 's/clusters\\///' \
       | sort --version-sort \
@@ -402,7 +431,7 @@ process agglomerative_clustering {
 
     if (( "\$NUMSEQS" > "16000" ))
     then
-       
+
        echo "to be split:"${input}":""\$NUMSEQS"\n
 
        ## Clustering
@@ -415,7 +444,7 @@ process agglomerative_clustering {
          -sort other \
          -uc ${input}_clusters_2_90.uc \
          -threads ${task.cpus}
-       
+
        mkdir -p "clusters"
        mkdir -p "singletons"
        mkdir -p "calc_distm_out"
@@ -625,10 +654,10 @@ process compound_clusters {
 process clustering_compounds {
 
     label "main_container"
-    
+
     // tag "$input"
     tag "${input.getName().replaceFirst(/.fas$/, "")}"
-    
+
     cpus 4
 
     input:
@@ -656,7 +685,7 @@ process clustering_compounds {
 
     if (( "\$NUMSEQS" > "16000" ))
     then
-      
+
       echo "to be split:"${input}":""\$NUMSEQS"\n
 
       ## Clustering
@@ -834,7 +863,7 @@ process analyse_usearch_output {
       path (small_clusters, stageAs: "compounds/calc_distm_out/*")   // compounds/calc_distm_out/*.fas_out_threshold
       path (large_clusters, stageAs: "compounds/*")                  // compounds/UCL10_000035.fas_folder/...
       path best_hits_uc  // closedref.80-best-hits.map.uc
-    
+
     output:
       path "matches_${threshold}.txt", emit: matches
       path "compounds/calc_distm_out/*_out_${threshold}_bc", emit: bc
@@ -934,7 +963,7 @@ process parse_matches_html {
 
     input:
       tuple val(threshold), path (matches, stageAs: "matches/*")
-      // val(threshold)                        // 005                   
+      // val(threshold)                        // 005
       // path (matches, stageAs: "matches/*")  // matches_out_*.csv & matches_1_out_*.csv
 
     output:
@@ -962,7 +991,7 @@ process krona {
 
     input:
       tuple val(threshold), path (matches, stageAs: "matches/*")
-      // val(threshold)                        // 005                   
+      // val(threshold)                        // 005
       // path (matches, stageAs: "matches/*")  // matches_out_*.csv
 
     output:
@@ -992,7 +1021,7 @@ process krona {
 
 //  Workflow
 workflow {
-      
+
   // Input file sequences (FASTA)
   ch_input = Channel.value(params.input)
 
@@ -1213,7 +1242,7 @@ workflow {
 
   // Channel with threshold values
   ch_thresholds = Channel.fromList( ['005', '01', '015', '02', '025', '03'] )
-  
+
   // Combine thresholds and matches into tuples
   // (to reuse value of `ch_all_matches`)
   ch_threshold_match = ch_thresholds.combine(ch_all_matches.toList())
@@ -1231,7 +1260,6 @@ workflow {
 
   // Create Krona charts
   krona(ch_threshold_match)
-
 
 }
 
