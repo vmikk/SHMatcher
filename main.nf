@@ -980,6 +980,8 @@ process parse_matches_html {
     label "main_container"
     // cpus 1
 
+    publishDir "${params.outdir}/HTML_reports"
+
     input:
         tuple val(threshold), path (matches, stageAs: "matches/*")
         // val(threshold)                        // 005
