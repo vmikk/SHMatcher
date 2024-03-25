@@ -446,14 +446,13 @@ process agglomerative_clustering {
          -threads ${task.cpus}
 
        mkdir -p "clusters"
-       mkdir -p "singletons"
        mkdir -p "calc_distm_out"
 
        ## Parse usearch clusters
        echo -e "\n..Parsing USEARCH clustering output\n"
        clusterparser_usearch_90_pre.py \
-         --name ${input} \
-         --file ${input}_clusters_2_90.uc \
+         --name            ${input} \
+         --file            ${input}_clusters_2_90.uc \
          --tmp_file1       clusters_out_2_90_pre.txt \
          --tmp_file_nohits ${iupac} \
          --tmp_cl_file     tmp.txt \
@@ -470,7 +469,10 @@ process agglomerative_clustering {
          --threads    ${task.cpus}
 
       ## Concatenate clusters
-      find calc_distm_out -name "Cluster*" -exec cat {} + \
+      echo -e "\n..Concatenating sub-clusters\n"
+      find calc_distm_out -name "Cluster*" \
+        | sort --version-sort \
+        | xargs awk -f \$(which "renumber_clusters.awk") \
         > ${input}_out_005
 
     else
@@ -492,7 +494,7 @@ process agglomerative_clustering {
       echo -e "\n..Complete-linkage clustering\n"
       usearch \
         -cluster_aggd ${input}_mx_005 \
-        -clusterout ${input}_out_005 \
+        -clusterout   ${input}_out_005 \
         -id 0.995 \
         -linkage max
 
