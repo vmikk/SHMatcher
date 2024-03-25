@@ -80,6 +80,9 @@ process chimera_filtering {
     label "main_container"
 
     cpus 8
+    publishDir "${params.outdir}/Excluded_sequences",
+        pattern: "excluded.txt",
+        saveAs: { filename -> "1_Chimerae.txt" }
 
     input:
         path input
@@ -132,6 +135,10 @@ process exclude_non_iupac {
     label "main_container"
 
     // cpus 1
+
+    publishDir "${params.outdir}/Excluded_sequences",
+        pattern: "excluded.txt",
+        saveAs: { filename -> "2_NonIUPAC.txt" }
 
     input:
         path input
@@ -231,6 +238,10 @@ process select_representatives {
     label "main_container"
 
     // cpus 1
+
+    publishDir "${params.outdir}/Excluded_sequences",
+        pattern: "excluded.txt",
+        saveAs: { filename -> "3_NoRepresentative.txt" }
 
     input:
       path centroids   // centroids_100.fasta
