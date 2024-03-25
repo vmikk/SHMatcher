@@ -25,6 +25,8 @@ if(params.its_region == "its2" & params.minlen2 == null){
     params.minlen2 = 100
 }
 
+// Allow query sequences vary 4% in length at 100% similarity
+params.seqlenvariation = false  // == `include_vsearch_step` param of sh_matching_pub
 
 // Input sequence preparion:
 // Replace sequence identifiers with unique codes,
