@@ -28,6 +28,10 @@ if(params.its_region == "its2" & params.minlen2 == null){
 // Allow query sequences vary 4% in length at 100% similarity
 params.seqlenvariation = false  // == `include_vsearch_step` param of sh_matching_pub
 
+// Sequence filtering by alignment coverage
+params.mincoverage = 85
+
+
 // Input sequence preparion:
 // Replace sequence identifiers with unique codes,
 // Remove duplicate sequences
