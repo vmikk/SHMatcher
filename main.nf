@@ -1008,6 +1008,8 @@ process krona {
     label "main_container"
     // cpus 1
 
+    publishDir "${params.outdir}/Krona", pattern: "*.html"
+
     input:
         tuple val(threshold), path (matches, stageAs: "matches/*")
         // val(threshold)                        // 005
