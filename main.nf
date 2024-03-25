@@ -907,7 +907,8 @@ process analyse_usearch_output {
     """
 }
 
-// Parse matches files to output information about input sequences 
+
+// Parse matches files to output information about input sequences
 // and their belonging to SHs on different thresholds
 process parse_matches {
 
@@ -915,31 +916,31 @@ process parse_matches {
     // cpus 1
 
     input:
-      path (matches, stageAs: "matches/*")   // "matches/matches_*.txt"
-      path sh2compound_mapping  // "/sh_matching/data/sh2compound_mapping.txt"
-      path shs_out              // "/sh_matching/data/shs_out.txt"
-      path compounds_out        // "/sh_matching/data/compounds_out.txt"
-      path centroid2sh_mappings // "/sh_matching/data/centroid2sh_mappings.txt"
-      path source_names         // "source_names"
-      path duplic_seqs          // "duplic_seqs.txt"
-      path seq_mappings         // "seq_mappings.txt"
+        path (matches, stageAs: "matches/*")   // "matches/matches_*.txt"
+        path sh2compound_mapping  // "/sh_matching/data/sh2compound_mapping.txt"
+        path shs_out              // "/sh_matching/data/shs_out.txt"
+        path compounds_out        // "/sh_matching/data/compounds_out.txt"
+        path centroid2sh_mappings // "/sh_matching/data/centroid2sh_mappings.txt"
+        path source_names         // "source_names"
+        path duplic_seqs          // "duplic_seqs.txt"
+        path seq_mappings         // "seq_mappings.txt"
 
     output:
-      path "matches/matches_out_*.csv", emit: shmatches
+        path "matches/matches_out_*.csv", emit: shmatches
 
     script:
     """
     echo -e "Parsing SH matches\n"
 
     parse_matches.pl \
-      --matches_dir          "matches" \
-      --sh2compound_file     ${sh2compound_mapping} \
-      --shs_file             ${shs_out} \
-      --compound_file        ${compounds_out} \
-      --centroid2sh_file     ${centroid2sh_mappings} \
-      --accno_seqs_file      ${source_names} \
-      --duplicate_seqs_file1 ${duplic_seqs} \
-      --duplicate_seqs_file2 ${seq_mappings}
+        --matches_dir          "matches" \
+        --sh2compound_file     ${sh2compound_mapping} \
+        --shs_file             ${shs_out} \
+        --compound_file        ${compounds_out} \
+        --centroid2sh_file     ${centroid2sh_mappings} \
+        --accno_seqs_file      ${source_names} \
+        --duplicate_seqs_file1 ${duplic_seqs} \
+        --duplicate_seqs_file2 ${seq_mappings}
 
     echo -e "..Done"
     """
