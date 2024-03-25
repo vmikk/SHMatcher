@@ -1070,7 +1070,7 @@ workflow {
 
   // Selecting representative sequences
   select_representatives(
-    seqlen_variation.out.seqs,
+    ch_seqlen_seqs,
     exclude_non_iupac.out.iupac)
 
 
@@ -1105,7 +1105,7 @@ workflow {
     clustering_95.out.txt,
     clustering_90.out.txt,
     seq_prep.out.namesuniq,
-    seqlen_variation.out.uc
+    ch_seqlen_uc
     )
 
   // Channel with clusters
