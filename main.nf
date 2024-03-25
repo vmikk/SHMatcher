@@ -650,7 +650,7 @@ process compound_clusters {
 }
 
 
-// Go through compound clusters and 
+// Go through compound clusters and
 // run 97% usearch clustering if needed (if >16000 in cluster size)
 // -> calc 3.0% distance matrix to form SHs based on these
 process clustering_compounds {
@@ -667,14 +667,7 @@ process clustering_compounds {
       path iupac    // iupac_out_vsearch.fasta
 
     output:
-      path "calc_distm_out/*_out_*", emit: clusters_small, optional: true   
-      path "*.fas_folder", emit: clusters_large, optional: true
-
-      // "Small" clusters
-      // compounds/calc_distm_out/UCL9_000001.fas_out_*
-
-      // "Large" clusters (in *_folder)
-      // compounds/UCL9_000035.fas_folder/...      
+      path "calc_distm_out/*_out_*", emit: clusters
 
     script:
     """
@@ -709,12 +702,28 @@ process clustering_compounds {
       echo -e "\n..Parsing USEARCH clustering output\n"
       clusterparser_usearch_90.py \
          --name            ${input} \
-         --file ${input}_clusters_2_90.uc \
+         --file            ${input}_clusters_2_90.uc \
          --tmp_file1       clusters_out_2_90_pre.txt \
          --tmp_file_nohits ${iupac} \
          --tmp_cl_file     tmp.txt \
          --tmp_singl_file  singletons.txt \
          --log_file        err.log
+
+      ## Remove clusters without user sequences
+      # echo -e "..Removing redundant clusters"
+      # grep -L '^>iid_' -r clusters   | parallel -j1 "rm {}"
+      # grep -L '^>iid_' -r singletons | parallel -j1 "rm {}"
+      #
+      # ## Fix the cluster and singleton lists
+      # find clusters -type f -name "Cluster*" \
+      #   | sed 's/clusters\\///' \
+      #   | sort --version-sort \
+      #   > tmp.txt
+      #
+      # find singletons -type f -name "Singleton*" \
+      #   | sed 's/singletons\\///' \
+      #   | sort --version-sort \
+      #   > singletons.txt
 
       ## Calculate SHs (max 3.0% distance)
       ## Calculate usearch distance matrix and generate (SH) clusters
