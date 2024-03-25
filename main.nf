@@ -78,8 +78,8 @@ process seq_prep {
 process chimera_filtering {
 
     label "main_container"
+    // cpus 8
 
-    cpus 8
     publishDir "${params.outdir}/Excluded_sequences",
         pattern: "excluded.txt",
         saveAs: { filename -> "1_Chimerae.txt" }
@@ -133,7 +133,6 @@ process chimera_filtering {
 process exclude_non_iupac {
 
     label "main_container"
-
     // cpus 1
 
     publishDir "${params.outdir}/Excluded_sequences",
@@ -173,8 +172,7 @@ process exclude_non_iupac {
 process seqlen_variation {
 
     label "main_container"
-
-    cpus 8
+    // cpus 8
 
     input:
       path input   // iupac_out_vsearch_96.fasta
@@ -207,8 +205,7 @@ process seqlen_variation {
 process no_seqlen_variation {
 
     label "main_container"
-
-    cpus 8
+    // cpus 8
 
     input:
       path input   // iupac_out_vsearch_96.fasta
@@ -236,7 +233,6 @@ process no_seqlen_variation {
 process select_representatives {
 
     label "main_container"
-
     // cpus 1
 
     publishDir "${params.outdir}/Excluded_sequences",
@@ -282,7 +278,7 @@ process clustering {
     tag "$threshold"
     label "main_container"
 
-    // cpus 10
+    // cpus 8
 
     input:
         path input
@@ -337,8 +333,7 @@ process clustering {
 process clustering_final {
 
     label "main_container"
-
-    // cpus 10
+    // cpus 8
 
     input:
         path input       // in_80_pre.fasta
@@ -422,7 +417,7 @@ process agglomerative_clustering {
 
     label "main_container"
     tag "$input"
-    cpus 6
+    // cpus 4
 
     input:
         path input    // Cluster0
@@ -556,7 +551,7 @@ process select_core_reps {
 process sh_matching {
 
     label "main_container"
-    cpus 8
+    // cpus 8
 
     input:
       path input  // core_reps_pre.fasta
@@ -668,6 +663,7 @@ process compound_clusters {
 process clustering_compounds {
 
     label "main_container"
+    // cpus 3
 
     // tag "$input"
     tag "${input.getName().replaceFirst(/.fas$/, "")}"
