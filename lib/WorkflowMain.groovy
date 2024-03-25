@@ -12,6 +12,7 @@ class WorkflowMain {
     public static String citation(workflow) {
         return "If you use SHMatcher for your analysis please cite:\n" +
             "  * UNITE Species Hypotheses Matching Analysis: https://doi.org/10.3897/biss.6.93856\n" +
+            "  * SH MATCHING analysis tool: https://github.com/TU-NHM/sh_matching_pub\n" +
             "  * SHMatcher pipeline: https://github.com/vmikk/SHMatcher"
     }
 
