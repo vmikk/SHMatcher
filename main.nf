@@ -871,6 +871,8 @@ include { analyse_usearch_output as analyse_usearch_output_020 } from './modules
 include { analyse_usearch_output as analyse_usearch_output_015 } from './modules/analyse_usearch_output.nf'
 include { analyse_usearch_output as analyse_usearch_output_010 } from './modules/analyse_usearch_output.nf'
 include { analyse_usearch_output as analyse_usearch_output_005 } from './modules/analyse_usearch_output.nf'
+
+/*
 // Parse usearch output
 process analyse_usearch_output {
 
@@ -906,6 +908,7 @@ process analyse_usearch_output {
     echo -e "..Done"
     """
 }
+*/
 
 
 // Parse matches files to output information about input sequences
