@@ -12,17 +12,17 @@ params.shdata = "sh_matching/data"
 
 // Sequence filtering by length
 if(params.its_region == "itsfull" & params.minlen1 == null){
-  params.minlen1 = 400
+    params.minlen1 = 400
 }
 if(params.its_region == "its2" & params.minlen1 == null){
-  params.minlen1 = 100
+    params.minlen1 = 100
 }
 
 if(params.its_region == "itsfull" & params.minlen2 == null){
-  params.minlen2 = 350
+    params.minlen2 = 350
 }
 if(params.its_region == "its2" & params.minlen2 == null){
-  params.minlen2 = 100
+    params.minlen2 = 100
 }
 
 
@@ -32,17 +32,16 @@ if(params.its_region == "its2" & params.minlen2 == null){
 process seq_prep {
 
     label "main_container"
-
     // cpus 1
 
     input:
-      path input
+        path input
 
     output:
-      path "source_names",               emit: namesorig
-      path "source_fasta_unique",        emit: unique
-      path "source_fasta_uc",            emit: uc
-      path "source_fasta_names",         emit: namesuniq
+        path "source_names",               emit: namesorig
+        path "source_fasta_unique",        emit: unique
+        path "source_fasta_uc",            emit: uc
+        path "source_fasta_names",         emit: namesuniq
 
     script:
     """
@@ -51,22 +50,22 @@ process seq_prep {
     ## Replace sequence identifiers with unique codes for the analysis
     echo -e "\n..Replacing sequence names with codes\n"
     replace_seq_names_w_codes.py \
-      --infile ${input} \
-      --fasta_file source_fasta \
-      --names_file source_names
+        --infile ${input} \
+        --fasta_file source_fasta \
+        --names_file source_names
 
     ## Find the set of unique sequences in an input file
     echo -e "\n..Dereplicating sequences\n"
     vsearch \
-      --fastx_uniques source_fasta \
-      --fastaout      source_fasta_unique \
-      --uc            source_fasta_uc
+        --fastx_uniques source_fasta \
+        --fastaout      source_fasta_unique \
+        --uc            source_fasta_uc
 
     ## Format output to restore original sequence
     echo -e "\n..Reformatting sequences\n"
     reformat_fastx_uniques_output.py \
-      --infile  source_fasta_uc \
-      --outfile source_fasta_names
+        --infile  source_fasta_uc \
+        --outfile source_fasta_names
 
     echo -e "..Done"
     """
@@ -81,14 +80,14 @@ process chimera_filtering {
     cpus 8
 
     input:
-      path input
-      path db        // sanger_refs_sh.udb
+        path input
+        path db        // sanger_refs_sh.udb
 
     output:
-      path "seqs_out_chim.fasta",                  emit: fasta
-      path "usearch_global.full.75.map.uc",        emit: uc
-      path "usearch_global.full.75.blast6out.txt", emit: blast6out
-      path "excluded.txt",                         emit: excluded, optional: true
+        path "seqs_out_chim.fasta",                  emit: fasta
+        path "usearch_global.full.75.map.uc",        emit: uc
+        path "usearch_global.full.75.blast6out.txt", emit: blast6out
+        path "excluded.txt",                         emit: excluded, optional: true
 
     script:
     """
@@ -97,27 +96,27 @@ process chimera_filtering {
     ## vsearch usearch_global
     echo -e "..Running VSEARCH\n"
     vsearch \
-      --usearch_global ${input} \
-      --db             ${db} \
-      --strand         plus \
-      --id             0.75 \
-      --threads        ${task.cpus} \
-      --uc             usearch_global.full.75.map.uc \
-      --blast6out      usearch_global.full.75.blast6out.txt \
-      --output_no_hits
+        --usearch_global ${input} \
+        --db             ${db} \
+        --strand         plus \
+        --id             0.75 \
+        --threads        ${task.cpus} \
+        --uc             usearch_global.full.75.map.uc \
+        --blast6out      usearch_global.full.75.blast6out.txt \
+        --output_no_hits
 
     ## Handle all potentially chimeric sequences from usearch_global
     echo -e "\n..Processing VSEARCH output\n"
     exclude_chims.py \
-      --global_infile usearch_global.full.75.blast6out.txt \
-      --infile        ${input} \
-      --outfile       seqs_out_chim.fasta \
-      --log_file      err.log \
-      --ex_file       excluded.txt \
-      --region        ${params.its_region} \
-      --minlen1       ${params.minlen1} \
-      --minlen2       ${params.minlen2} \
-      --mincoverage   ${params.mincoverage}
+        --global_infile usearch_global.full.75.blast6out.txt \
+        --infile        ${input} \
+        --outfile       seqs_out_chim.fasta \
+        --log_file      err.log \
+        --ex_file       excluded.txt \
+        --region        ${params.its_region} \
+        --minlen1       ${params.minlen1} \
+        --minlen2       ${params.minlen2} \
+        --mincoverage   ${params.mincoverage}
 
     echo -e "..Done"
 
@@ -133,13 +132,13 @@ process exclude_non_iupac {
     // cpus 1
 
     input:
-      path input
-      path inputuniq
+        path input
+        path inputuniq
 
     output:
-      path "iupac_out_full.fasta",       emit: iupac
-      path "iupac_out_vsearch_96.fasta", emit: iupac96
-      path "excluded.txt",               emit: excluded
+        path "iupac_out_full.fasta",       emit: iupac
+        path "iupac_out_vsearch_96.fasta", emit: iupac96
+        path "excluded.txt",               emit: excluded
 
     script:
     """
@@ -148,13 +147,13 @@ process exclude_non_iupac {
     ## Additional quality controls
     ## Remove low quality sequences (too short or with too many non-IUPAC symbols)
     exclude_non_iupac.py \
-      --infile              ${input} \
-      --infile_orig         ${inputuniq} \
-      --outfile             iupac_out_full.fasta \
-      --outfile_vsearch_96  iupac_out_vsearch_96.fasta \
-      --log_file            err.log \
-      --ex_file             excluded.txt \
-      --allowed_number      6
+        --infile              ${input} \
+        --infile_orig         ${inputuniq} \
+        --outfile             iupac_out_full.fasta \
+        --outfile_vsearch_96  iupac_out_vsearch_96.fasta \
+        --log_file            err.log \
+        --ex_file             excluded.txt \
+        --allowed_number      6
 
     echo -e "..Done"
     """
@@ -172,22 +171,22 @@ process seqlen_variation {
       path input   // iupac_out_vsearch_96.fasta
 
     output:
-      path "centroids_100.fasta", emit: seqs
-      path "clusters_100.uc",     emit: uc
+        path "centroids_100.fasta", emit: seqs
+        path "clusters_100.uc",     emit: uc
 
     script:
     """
     echo "Running vsearch 100% clustering"
 
     vsearch \
-      --cluster_fast ${input} \
-      --id           1 \
-      --iddef        2 \
-      --threads      ${task.cpus} \
-      --uc           clusters_100.uc \
-      --centroids    centroids_100.fasta \
-      --query_cov    0.96 \
-      --target_cov   0.96
+        --cluster_fast ${input} \
+        --id           1 \
+        --iddef        2 \
+        --threads      ${task.cpus} \
+        --uc           clusters_100.uc \
+        --centroids    centroids_100.fasta \
+        --query_cov    0.96 \
+        --target_cov   0.96
 
     echo -e "..Done"
 
@@ -206,18 +205,18 @@ process no_seqlen_variation {
       path input   // iupac_out_vsearch_96.fasta
 
     output:
-      path "centroids_100.fasta", emit: seqs
-      path "clusters_100.uc",     emit: uc
+        path "centroids_100.fasta", emit: seqs
+        path "clusters_100.uc",     emit: uc
 
     script:
     """
     echo "Running vsearch fastx_uniques"
 
     vsearch \
-      --fastx_uniques ${input} \
-      --threads       ${task.cpus} \
-      --uc            clusters_100.uc \
-      --fastaout      centroids_100.fasta
+        --fastx_uniques ${input} \
+        --threads       ${task.cpus} \
+        --uc            clusters_100.uc \
+        --fastaout      centroids_100.fasta
 
     echo -e "..Done"
 
@@ -236,8 +235,8 @@ process select_representatives {
       path iupac       // iupac_out_full.fasta
 
     output:
-      path "iupac_out_vsearch.fasta", emit: fasta
-      path "excluded.txt", emit: excluded, optional: true
+        path "iupac_out_vsearch.fasta", emit: fasta
+        path "excluded.txt", emit: excluded, optional: true
 
     script:
     """
@@ -245,11 +244,11 @@ process select_representatives {
 
     ## vsearch representatives (the sequence count diff. is 9.5% for vsearch 4%)
     select_vsearch_reps.py \
-      --infile_centroids ${centroids} \
-      --infile_iupac     ${iupac} \
-      --outfile          iupac_out_vsearch.fasta \
-      --excluded         excluded.txt \
-      --log_file         err.log
+        --infile_centroids ${centroids} \
+        --infile_iupac     ${iupac} \
+        --outfile          iupac_out_vsearch.fasta \
+        --excluded         excluded.txt \
+        --log_file         err.log
 
     echo -e "..Done"
 
@@ -273,14 +272,14 @@ process clustering {
     // cpus 10
 
     input:
-      path input
-      val  threshold
-      path iupac       // iupac_out_vsearch.fasta
+        path input
+        val  threshold
+        path iupac       // iupac_out_vsearch.fasta
 
     output:
-      path "output_*.fasta",      emit: fasta
-      path "clusters_*.uc",       emit: uc
-      path "clusters_out_*.txt",  emit: txt
+        path "output_*.fasta",      emit: fasta
+        path "clusters_*.uc",       emit: uc
+        path "clusters_out_*.txt",  emit: txt
 
     script:
     def iupacc = iupac.name != 'NO_FILE' ? "--fasta ${iupac}" : "--fasta ${input}"
@@ -292,21 +291,21 @@ process clustering {
     ## Clustering
     echo -e "\n..Running USEARCH\n"
     usearch \
-      -cluster_fast ${input} \
-      -id           ${threshold} \
-      -gapopen      0.0/0.0E \
-      -gapext       1.0/0.5E \
-      -sort         other \
-      -uc           clusters_${threshold}.uc
+        -cluster_fast ${input} \
+        -id           ${threshold} \
+        -gapopen      0.0/0.0E \
+        -gapext       1.0/0.5E \
+        -sort         other \
+        -uc           clusters_${threshold}.uc
 
     ## Parsing cluster information
     echo -e "\n..Parsing clusters\n"
     clusterparser_preclust_pre.py \
-      --uc           clusters_${threshold}.uc \
-      ${iupacc} \
-      --clusters_txt clusters_out_${threshold}.txt \
-      --output       output_${threshold}.fasta \
-      --log_file     err.log
+        --uc           clusters_${threshold}.uc \
+        ${iupacc} \
+        --clusters_txt clusters_out_${threshold}.txt \
+        --output       output_${threshold}.fasta \
+        --log_file     err.log
 
     echo -e "..Done"
 
@@ -329,22 +328,22 @@ process clustering_final {
     // cpus 10
 
     input:
-      path input       // in_80_pre.fasta
-      path iupac       // iupac_out_vsearch.fasta
-      path clust97     // clusters_out_97_pre.txt
-      path clust95     // clusters_out_95_pre.txt
-      path clust90     // clusters_out_90_pre.txt
-      path fastanames  // source_runID_fastanames  // source_fasta_names
-      path clust100uc  // clusters_100.uc
+        path input       // in_80_pre.fasta
+        path iupac       // iupac_out_vsearch.fasta
+        path clust97     // clusters_out_97_pre.txt
+        path clust95     // clusters_out_95_pre.txt
+        path clust90     // clusters_out_90_pre.txt
+        path fastanames  // source_runID_fastanames  // source_fasta_names
+        path clust100uc  // clusters_100.uc
 
     output:
-      path "clusters/*",          emit: clusters,   optional:true
-      path "singletons/*",        emit: singletons, optional:true
-      path "clusters_80.uc",      emit: uc80
-      path "clusters_out_80.txt", emit: txt80
-      path "clusters.txt",        emit: clusters_list
-      path "singletons.txt",      emit: singletons_list
-      path "duplic_seqs.txt",     emit: duplicates
+        path "clusters/*",          emit: clusters,   optional:true
+        path "singletons/*",        emit: singletons, optional:true
+        path "clusters_80.uc",      emit: uc80
+        path "clusters_out_80.txt", emit: txt80
+        path "clusters.txt",        emit: clusters_list
+        path "singletons.txt",      emit: singletons_list
+        path "duplic_seqs.txt",     emit: duplicates
 
     script:
     """
@@ -354,12 +353,12 @@ process clustering_final {
     ## Clustering
     echo -e "\n..Running USEARCH\n"
     usearch \
-      -cluster_fast ${input} \
-      -id           0.80 \
-      -gapopen      0.0/0.0E \
-      -gapext       1.0/0.5E \
-      -sort         other \
-      -uc           clusters_80.uc
+        -cluster_fast ${input} \
+        -id           0.80 \
+        -gapopen      0.0/0.0E \
+        -gapext       1.0/0.5E \
+        -sort         other \
+        -uc           clusters_80.uc
 
     mkdir -p singletons
     mkdir -p clusters
@@ -367,36 +366,36 @@ process clustering_final {
     ## Parsing and aggregating clustering information
     echo -e "\n..Parsing and aggregating clustering info\n"
     clusterparser_preclust_final_pre.py \
-      --cl80uc   clusters_80.uc  \
-      --cl97     ${clust97} \
-      --cl95     ${clust95} \
-      --cl90     ${clust90} \
-      --cl80     clusters_out_80.txt \
-      --allseqs  ${iupac} \
-      --log      err.log
+        --cl80uc   clusters_80.uc  \
+        --cl97     ${clust97} \
+        --cl95     ${clust95} \
+        --cl90     ${clust90} \
+        --cl80     clusters_out_80.txt \
+        --allseqs  ${iupac} \
+        --log      err.log
 
     ## List clusters and singletons
     echo -e "\n..Listing clusters and singletons\n"
 
     find clusters -type f -name "Cluster*" \
-      | sed 's/clusters\\///' \
-      | sort --version-sort \
-      > clusters.txt
+        | sed 's/clusters\\///' \
+        | sort --version-sort \
+        > clusters.txt
 
     find singletons -type f -name "Singleton*" \
-      | sed 's/singletons\\///' \
-      | sort --version-sort \
-      > singletons.txt
+        | sed 's/singletons\\///' \
+        | sort --version-sort \
+        > singletons.txt
 
     ## Write vsearch clustering duplicates into `duplic_seqs.txt` file
     echo -e "\n..Parsing results\n"
     usearch_parser.py \
-      --clusters    clusters.txt \
-      --singletons  singletons.txt \
-      --cov100_uniq ${fastanames} \
-      --cov96_uniq  ${clust100uc} \
-      --duplicates  duplic_seqs.txt \
-      --log err.log
+        --clusters    clusters.txt \
+        --singletons  singletons.txt \
+        --cov100_uniq ${fastanames} \
+        --cov96_uniq  ${clust100uc} \
+        --duplicates  duplic_seqs.txt \
+        --log err.log
 
     echo -e "..Done"
     """
@@ -413,12 +412,12 @@ process agglomerative_clustering {
     cpus 6
 
     input:
-      path input    // Cluster0
-      path iupac    // iupac_out_vsearch.fasta
+        path input    // Cluster0
+        path iupac    // iupac_out_vsearch.fasta
 
     output:
-      path "*_out_005",   emit: clusters
-      // path "*_mx_005", emit: dist
+        path "*_out_005",   emit: clusters
+        // path "*_mx_005", emit: dist
 
     script:
     """
@@ -432,71 +431,71 @@ process agglomerative_clustering {
     if (( "\$NUMSEQS" > "16000" ))
     then
 
-       echo "to be split:"${input}":""\$NUMSEQS"\n
+        echo "to be split:"${input}":""\$NUMSEQS"\n
 
-       ## Clustering
-       echo -e "\n..97% clustering\n"
-       usearch \
-         -cluster_fast ${input} \
-         -id 0.97 \
-         -gapopen 0.0/0.0E \
-         -gapext 1.0/0.5E \
-         -sort other \
-         -uc ${input}_clusters_2_90.uc \
-         -threads ${task.cpus}
+        ## Clustering
+        echo -e "\n..97% clustering\n"
+        usearch \
+            -cluster_fast ${input} \
+            -id 0.97 \
+            -gapopen 0.0/0.0E \
+            -gapext 1.0/0.5E \
+            -sort other \
+            -uc ${input}_clusters_2_90.uc \
+            -threads ${task.cpus}
 
-       mkdir -p "clusters"
-       mkdir -p "calc_distm_out"
+        mkdir -p "clusters"
+        mkdir -p "calc_distm_out"
 
-       ## Parse usearch clusters
-       echo -e "\n..Parsing USEARCH clustering output\n"
-       clusterparser_usearch_90_pre.py \
-         --name            ${input} \
-         --file            ${input}_clusters_2_90.uc \
-         --tmp_file1       clusters_out_2_90_pre.txt \
-         --tmp_file_nohits ${iupac} \
-         --tmp_cl_file     tmp.txt \
-         --tmp_singl_file  singletons.txt \
-         --log_file        err.log
+        ## Parse usearch clusters
+        echo -e "\n..Parsing USEARCH clustering output\n"
+        clusterparser_usearch_90_pre.py \
+            --name            ${input} \
+            --file            ${input}_clusters_2_90.uc \
+            --tmp_file1       clusters_out_2_90_pre.txt \
+            --tmp_file_nohits ${iupac} \
+            --tmp_cl_file     tmp.txt \
+            --tmp_singl_file  singletons.txt \
+            --log_file        err.log
 
-       ## Calculate usearch distance matrix
-       echo -e "\n..Complete-linkage clustering of sub-clusters\n"
-       calc_distm_formatter_90_pre.py \
-         --cluster    ${input} \
-         --uclust_dir clusters \
-         --out_dir    calc_distm_out \
-         --cl_tmp     tmp.txt \
-         --threads    ${task.cpus}
+        ## Calculate usearch distance matrix
+        echo -e "\n..Complete-linkage clustering of sub-clusters\n"
+        calc_distm_formatter_90_pre.py \
+            --cluster    ${input} \
+            --uclust_dir clusters \
+            --out_dir    calc_distm_out \
+            --cl_tmp     tmp.txt \
+            --threads    ${task.cpus}
 
-      ## Concatenate clusters
-      echo -e "\n..Concatenating sub-clusters\n"
-      find calc_distm_out -name "Cluster*" \
-        | sort --version-sort \
-        | xargs awk -f \$(which "renumber_clusters.awk") \
-        > ${input}_out_005
+        ## Concatenate clusters
+        echo -e "\n..Concatenating sub-clusters\n"
+        find calc_distm_out -name "Cluster*" \
+            | sort --version-sort \
+            | xargs awk -f \$(which "renumber_clusters.awk") \
+            > ${input}_out_005
 
     else
 
-      echo "sm:"${input}":""\$NUMSEQS"\n
+        echo "sm:"${input}":""\$NUMSEQS"\n
 
-      ## Calculate usearch distance matrix
-      # calc_distm_formatter_80_pre.py
+        ## Calculate usearch distance matrix
+        # calc_distm_formatter_80_pre.py
 
-      ## Generate a distance matrix
-      echo -e "\n..Generating distance matrix\n"
-      usearch \
-        -calc_distmx ${input} \
-        -tabbedout   ${input}_mx_005 \
-        -maxdist     0.005 \
-        -threads     ${task.cpus}
+        ## Generate a distance matrix
+        echo -e "\n..Generating distance matrix\n"
+        usearch \
+            -calc_distmx ${input} \
+            -tabbedout   ${input}_mx_005 \
+            -maxdist     0.005 \
+            -threads     ${task.cpus}
 
-      ## Agglomerative clustering
-      echo -e "\n..Complete-linkage clustering\n"
-      usearch \
-        -cluster_aggd ${input}_mx_005 \
-        -clusterout   ${input}_out_005 \
-        -id 0.995 \
-        -linkage max
+        ## Agglomerative clustering
+        echo -e "\n..Complete-linkage clustering\n"
+        usearch \
+            -cluster_aggd ${input}_mx_005 \
+            -clusterout   ${input}_out_005 \
+            -id 0.995 \
+            -linkage max
 
     fi
 
@@ -597,13 +596,13 @@ process parse_sh {
     echo -e "Parsing results of SH matching\n"
 
     parse_usearch_results.py \
-      --infile         ${iupac} \
-      --map_file       ${uc} \
-      --hits_fasta     hits.fasta \
-      --nohits_fasta   nohits.fasta \
-      --hits           hits.txt \
-      --best_hits      closedref.80-best-hits.map.uc \
-      --log            err.log
+        --infile         ${iupac} \
+        --map_file       ${uc} \
+        --hits_fasta     hits.fasta \
+        --nohits_fasta   nohits.fasta \
+        --hits           hits.txt \
+        --best_hits      closedref.80-best-hits.map.uc \
+        --log            err.log
 
     echo -e "..Done"
     """
@@ -618,13 +617,13 @@ process compound_clusters {
     // cpus 1
 
     input:
-      path datadir // sh_matching/data
-      path iupac   // iupac_out_full.fasta
-      path uc      // closedref.80-best-hits.map.uc
+        path datadir // sh_matching/data
+        path iupac   // iupac_out_full.fasta
+        path uc      // closedref.80-best-hits.map.uc
 
     output:
-      path "compounds/*.fas", emit: compounds
-      path "compounds.txt",   emit: compounds_list   // compounds/tmp.txt
+        path "compounds/*.fas", emit: compounds
+        path "compounds.txt",   emit: compounds_list   // compounds/tmp.txt
 
     script:
     """
@@ -634,16 +633,16 @@ process compound_clusters {
 
     echo -e "..Preparing compounds\n"
     create_compound_clusters.py \
-      --datadir  ${datadir} \
-      --infile   ${iupac} \
-      --uc       ${uc} \
-      --log      err.log \
+        --datadir  ${datadir} \
+        --infile   ${iupac} \
+        --uc       ${uc} \
+        --log      err.log \
 
     echo -e "..Listing clusters\n"
     find compounds -type f -name "UCL10_*.fas" \
-      | sed 's/compounds\\///' \
-      | sort --version-sort \
-      > compounds.txt
+        | sed 's/compounds\\///' \
+        | sort --version-sort \
+        > compounds.txt
 
     echo -e "..Done"
     """
@@ -973,21 +972,21 @@ process parse_matches_html {
     // cpus 1
 
     input:
-      tuple val(threshold), path (matches, stageAs: "matches/*")
-      // val(threshold)                        // 005
-      // path (matches, stageAs: "matches/*")  // matches_out_*.csv & matches_1_out_*.csv
+        tuple val(threshold), path (matches, stageAs: "matches/*")
+        // val(threshold)                        // 005
+        // path (matches, stageAs: "matches/*")  // matches_out_*.csv & matches_1_out_*.csv
 
     output:
-      path "matches_out_*.html", emit: html
+        path "matches_out_*.html", emit: html
 
     script:
     """
     echo -e "Parsing matches for html output\n"
 
     parse_matches_html.py \
-      --threshold  ${threshold} \
-      --matchesdir matches \
-      --outfile    matches_out_${threshold}.html
+        --threshold  ${threshold} \
+        --matchesdir matches \
+        --outfile    matches_out_${threshold}.html
 
     echo -e "..Done"
     """
@@ -1006,8 +1005,8 @@ process krona {
       // path (matches, stageAs: "matches/*")  // matches_out_*.csv
 
     output:
-      path "krona_*.html",   emit: kronahtml
-      // path "krona_*.txt", emit: kronatxt
+        path "krona_*.html",   emit: kronahtml
+        // path "krona_*.txt", emit: kronatxt
 
     script:
     """
@@ -1015,14 +1014,14 @@ process krona {
 
     ## Create input for Krona chart
     shmatches2kronatext.py \
-      --threshold  ${threshold} \
-      --matchesdir matches \
-      --outfile    krona_${threshold}.txt
+        --threshold  ${threshold} \
+        --matchesdir matches \
+        --outfile    krona_${threshold}.txt
 
     ## Export Krona charts
     ktImportText \
-      -o krona_${threshold}.html \
-      krona_${threshold}.txt
+        -o krona_${threshold}.html \
+        krona_${threshold}.txt
 
     echo -e "..Done"
     """
@@ -1122,12 +1121,12 @@ workflow {
 
   // Select representative sequences
   select_core_reps(
-   clustering_final.out.clusters_list,
-   clustering_final.out.singletons_list,
-   select_representatives.out.fasta,
-   ch_distm,
-   clustering_final.out.singletons
-   )
+    clustering_final.out.clusters_list,
+    clustering_final.out.singletons_list,
+    select_representatives.out.fasta,
+    ch_distm,
+    clustering_final.out.singletons
+    )
 
   // SH matching
   sh_matching(
