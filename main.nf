@@ -175,7 +175,7 @@ process seqlen_variation {
     // cpus 8
 
     input:
-      path input   // iupac_out_vsearch_96.fasta
+        path input   // iupac_out_vsearch_96.fasta
 
     output:
         path "centroids_100.fasta", emit: seqs
@@ -208,7 +208,7 @@ process no_seqlen_variation {
     // cpus 8
 
     input:
-      path input   // iupac_out_vsearch_96.fasta
+        path input   // iupac_out_vsearch_96.fasta
 
     output:
         path "centroids_100.fasta", emit: seqs
@@ -240,8 +240,8 @@ process select_representatives {
         saveAs: { filename -> "3_NoRepresentative.txt" }
 
     input:
-      path centroids   // centroids_100.fasta
-      path iupac       // iupac_out_full.fasta
+        path centroids   // centroids_100.fasta
+        path iupac       // iupac_out_full.fasta
 
     output:
         path "iupac_out_vsearch.fasta", emit: fasta
@@ -519,27 +519,27 @@ process select_core_reps {
     // cpus 8
 
     input:
-      path clusters_list   // clusters.txt     // tmp.txt
-      path singletons_list // singletons.txt
-      path iupac           // iupac_out_vsearch.fasta
-      path (distm, stageAs: "calc_distm_out/*")    // calc_distm_out/*_out_005
-      path (singletons, stageAs: "singletons/*")   // "singletons/Singleton*"
+        path clusters_list   // clusters.txt     // tmp.txt
+        path singletons_list // singletons.txt
+        path iupac           // iupac_out_vsearch.fasta
+        path (distm, stageAs: "calc_distm_out/*")    // calc_distm_out/*_out_005
+        path (singletons, stageAs: "singletons/*")   // "singletons/Singleton*"
 
     output:
-      path "core_reps_pre.fasta", emit: corereps
-      path "seq_mappings.txt",    emit: seqmappings
+        path "core_reps_pre.fasta", emit: corereps
+        path "seq_mappings.txt",    emit: seqmappings
 
     script:
     """
     echo -e "Selecting core representative sequences"
 
     select_core_reps_usearch.py \
-      --cl_list       ${clusters_list} \
-      --singl_list    ${singletons_list} \
-      --infile_iupac  ${iupac} \
-      --reps_outfile  core_reps_pre.fasta \
-      --seq_mappings  seq_mappings.txt \
-      --log_file      err.log
+        --cl_list       ${clusters_list} \
+        --singl_list    ${singletons_list} \
+        --infile_iupac  ${iupac} \
+        --reps_outfile  core_reps_pre.fasta \
+        --seq_mappings  seq_mappings.txt \
+        --log_file      err.log
 
     echo -e "..Done"
     """
@@ -554,11 +554,11 @@ process sh_matching {
     // cpus 8
 
     input:
-      path input  // core_reps_pre.fasta
-      path db     // sanger_refs_sh_full.udb
+        path input  // core_reps_pre.fasta
+        path db     // sanger_refs_sh_full.udb
 
     output:
-      path "closedref.80.map.uc", emit: matches
+        path "closedref.80.map.uc", emit: matches
 
     script:
     """
@@ -566,17 +566,17 @@ process sh_matching {
 
     echo -e "..Running VSEARCH\n"
     vsearch \
-      --usearch_global ${input} \
-      --db ${db} \
-      --strand plus \
-      --id 0.8 \
-      --threads ${task.cpus} \
-      --iddef 0 \
-      --gapopen 0I/0E \
-      --gapext 2I/1E \
-      --uc "closedref.80.map.uc" \
-      --maxaccepts 3 \
-      --maxrejects 0
+        --usearch_global ${input} \
+        --db ${db} \
+        --strand plus \
+        --id 0.8 \
+        --threads ${task.cpus} \
+        --iddef 0 \
+        --gapopen 0I/0E \
+        --gapext 2I/1E \
+        --uc "closedref.80.map.uc" \
+        --maxaccepts 3 \
+        --maxrejects 0
 
     echo -e "..Done"
     """
@@ -590,14 +590,14 @@ process parse_sh {
     // cpus 1
 
     input:
-      path iupac  // iupac_out_full.fasta
-      path uc     // closedref.80.map.uc
+        path iupac  // iupac_out_full.fasta
+        path uc     // closedref.80.map.uc
 
     output:
-      path "closedref.80-best-hits.map.uc", emit: matches
-      path "hits.txt",     emit: hits
-      path "hits.fasta",   emit: hits_seq
-      path "nohits.fasta", emit: nohits_seq, optional: true
+        path "closedref.80-best-hits.map.uc", emit: matches
+        path "hits.txt",     emit: hits
+        path "hits.fasta",   emit: hits_seq
+        path "nohits.fasta", emit: nohits_seq, optional: true
 
     script:
     """
@@ -1009,9 +1009,9 @@ process krona {
     // cpus 1
 
     input:
-      tuple val(threshold), path (matches, stageAs: "matches/*")
-      // val(threshold)                        // 005
-      // path (matches, stageAs: "matches/*")  // matches_out_*.csv
+        tuple val(threshold), path (matches, stageAs: "matches/*")
+        // val(threshold)                        // 005
+        // path (matches, stageAs: "matches/*")  // matches_out_*.csv
 
     output:
         path "krona_*.html",   emit: kronahtml
