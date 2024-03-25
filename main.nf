@@ -1055,8 +1055,18 @@ workflow {
     chimera_filtering.out.fasta,
     seq_prep.out.unique)
 
-  // Allow query sequences vary 4% in length at 100% similarity
-  seqlen_variation(exclude_non_iupac.out.iupac96)
+  if(params.seqlenvariation){
+    // Allow query sequences vary 4% in length at 100% similarity  (`include_vsearch_step` == "yes")
+    seqlen_variation(exclude_non_iupac.out.iupac96)
+    ch_seqlen_seqs = seqlen_variation.out.seqs
+    ch_seqlen_uc   = seqlen_variation.out.uc
+  } else {
+    // Skipping the vsearch 100% clustering step with 96% length coverage (`include_vsearch_step` == "no")
+    no_seqlen_variation(exclude_non_iupac.out.iupac96)
+    ch_seqlen_seqs = no_seqlen_variation.out.seqs
+    ch_seqlen_uc   = no_seqlen_variation.out.uc
+  }
+
 
   // Selecting representative sequences
   select_representatives(
