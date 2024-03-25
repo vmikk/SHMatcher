@@ -10,6 +10,20 @@ params.db     = "sanger_refs_sh.udb"
 params.dbfull = "sanger_refs_sh_full.udb"
 params.shdata = "sh_matching/data"
 
+// Sequence filtering by length
+if(params.its_region == "itsfull" & params.minlen1 == null){
+  params.minlen1 = 400
+}
+if(params.its_region == "its2" & params.minlen1 == null){
+  params.minlen1 = 100
+}
+
+if(params.its_region == "itsfull" & params.minlen2 == null){
+  params.minlen2 = 350
+}
+if(params.its_region == "its2" & params.minlen2 == null){
+  params.minlen2 = 100
+}
 
 
 // Input sequence preparion:
