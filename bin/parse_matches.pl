@@ -138,8 +138,8 @@ open (INFILE_ACCNOS, $accno_seqs_file);
 while (<INFILE_ACCNOS>) {
     chomp $_;
     my @fields = split("\t", $_);
-    my $seq_id = $fields[1];
-    $seq_id =~ s/i//g;
+    my $seq_id = $fields[1];                    # second column, temporary sequence id
+    $seq_id =~ s/^i|i$//g for $seq_id;
     $seq_id_hash{$seq_id} = $fields[0];
 }
 close INFILE_ACCNOS;
@@ -170,10 +170,10 @@ foreach my $threshold (@thresholds) {
     while (<MATCHES>) {
         chomp $_;
         my @fields = split("\t", $_);
-        my $seq_id = $fields[0];
-        $seq_id =~ s/i//g;
+        my $seq_id = $fields[0];                 # first column, original sequence name
+        $seq_id =~ s/^i|i$//g for $seq_id;
         my $best_match_seq_id = $fields[1];
-        $best_match_seq_id =~ s/i//g;
+        $best_match_seq_id =~ s/^i|i$//g for $best_match_seq_id;
 
         print MATCHES_OUT $seq_id . "\t" . $seq_id_hash{$seq_id} . "\t";
 
@@ -244,12 +244,13 @@ foreach my $threshold (@thresholds) {
             }
         }
         print MATCHES_OUT "\t\t\n";
+
         # check duplicates
         if (defined($seq_duplicate_hash{$fields[0]})) {
             my @fields2 = split(",", $seq_duplicate_hash{$fields[0]});
             for (my $k=0; $k<scalar(@fields2); $k++) {
                 my $dupl = $fields2[$k];
-                $dupl =~ s/i//g;
+                $dupl =~ s/^i|i$//g for $dupl;
                 # print each duplicate in a separate row
                 print STDERR $threshold . "\t" . $dupl . "\t" . $seq_id_hash{$dupl} . "\tDuplicate of " . $seq_id_hash{$seq_id} . "\n";
                 print MATCHES_OUT $dupl . "\t" . $seq_id_hash{$dupl} . "\t";
