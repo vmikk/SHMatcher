@@ -961,20 +961,24 @@ process merge_matches {
     // cpus 1
 
     input:
-      path (matches, stageAs: "matches/*")   // "matches/matches_out_*.csv"
-      path uc                                // "closedref.80-best-hits.map.uc"
+        path (matches, stageAs: "matches/*")   // "matches/matches_out_*.csv"
+        path uc                                // "closedref.80-best-hits.map.uc"
 
     output:
-      path "matches_out_all.csv", emit: matchesall
+        path "matches_out_all.csv", emit: matchesall
 
     script:
     """
     echo -e "Meging matches\n"
 
     merge_matches.py \
-      --matches  "matches" \
-      --besthits ${uc} \
-      --outfile  "matches_out_all.csv"
+        --matches  "matches" \
+        --besthits ${uc} \
+        --outfile  "matches_out_all.csv"
+
+    echo -e "..Done"
+    """
+}
 
     echo -e "..Done"
     """
