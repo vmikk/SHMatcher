@@ -10,8 +10,7 @@
 process clustering {
     tag "$threshold"
     label "main_container"
-
-    // cpus 10
+    // cpus 8
 
     input:
         path input
