@@ -557,6 +557,8 @@ process sh_matching {
     label "main_container"
     // cpus 8
 
+    publishDir "${params.outdir}/sh_matching"
+
     input:
         path input  // core_reps_pre.fasta
         path db     // sanger_refs_sh_full.udb
@@ -918,6 +920,8 @@ process parse_matches {
     label "main_container"
     // cpus 1
 
+    publishDir "${params.outdir}/Matches"
+
     input:
         path (matches, stageAs: "matches/*")   // "matches/matches_*.txt"
         path sh2compound_mapping  // "/sh_matching/data/sh2compound_mapping.txt"
@@ -960,6 +964,8 @@ process merge_matches {
     label "main_container"
     // cpus 1
 
+    publishDir "${params.outdir}/Matches"
+
     input:
         path (matches, stageAs: "matches/*")   // "matches/matches_out_*.csv"
         path uc                                // "closedref.80-best-hits.map.uc"
@@ -991,7 +997,7 @@ process parse_matches_html {
     label "main_container"
     // cpus 1
 
-    publishDir "${params.outdir}/HTML_reports"
+    publishDir "${params.outdir}/Matches"
 
     input:
         tuple val(threshold), path (matches, stageAs: "matches/*")
