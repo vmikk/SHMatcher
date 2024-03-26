@@ -1319,6 +1319,8 @@ workflow {
     parse_sh.out.matches    // "closedref.80-best-hits.map.uc"
     )
 
+  // Create pseudo-UC files
+  matches_to_uc(merge_matches.out.matchesall)
   // Channel with threshold values
   ch_thresholds = Channel.fromList( ['005', '01', '015', '02', '025', '03'] )
 
