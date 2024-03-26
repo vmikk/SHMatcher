@@ -986,6 +986,35 @@ process merge_matches {
     """
 }
 
+// Create pseudo-UC files
+process matches_to_uc {
+
+    label "container_r"
+    // cpus 1
+
+    publishDir "${params.outdir}/UC_files"
+
+    input:
+        path matches                        // "matches_out_all.csv"
+
+    output:
+        path "UC_030.uc.gz", emit: uc030
+        path "UC_025.uc.gz", emit: uc025
+        path "UC_020.uc.gz", emit: uc020
+        path "UC_015.uc.gz", emit: uc015
+        path "UC_010.uc.gz", emit: uc010
+        path "UC_005.uc.gz", emit: uc005
+
+    script:
+    """
+    echo -e "Converting match list into UC-like format\n"
+
+    matches_to_uc.R
+
+    echo -e "..Done"
+    """
+}
+
     echo -e "..Done"
     """
 }
