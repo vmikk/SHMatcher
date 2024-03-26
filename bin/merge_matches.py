@@ -25,7 +25,10 @@ best_hits_file = args.besthits   # user_dir / "closedref.80-best-hits.map.uc"
 threshold_list = ["03", "025", "02", "015", "01", "005"]
 one_line_str_dict = {}
 
+print("Starting script execution...")
+
 # get best hits into mapping and similarity tables
+print(f"Reading best hits from {best_hits_file}...")
 bh_mapping_dict = {}
 bh_sim_dict = {}
 with open(best_hits_file) as bh:
@@ -37,12 +40,15 @@ with open(best_hits_file) as bh:
             plutof_seq_url = "https://app.plutof.ut.ee/sequence/view/" + str(subject_fields[0].replace("i", ""))
             bh_mapping_dict[query_id] = plutof_seq_url
             bh_sim_dict[query_id] = str(row[3])
+print("Best hits loaded successfully.")
 
 # merge threshold-based files
+print("Merging threshold-based files...")
 with open(outfile, "w") as o:
     for thld in threshold_list:
         matches_file = Path(matches_dir) / f"matches_out_{thld}.csv"
         if matches_file.is_file():
+            print(f"Processing file: {matches_file}")
             with open(matches_file) as m:
                 dataReader_m = csv.reader(m, delimiter="\t")
                 row_ct = 0
@@ -87,6 +93,9 @@ with open(outfile, "w") as o:
                     else:
                         ## status (2.0) SH code (2.0)   SH/compound taxonomy (2.0)
                         one_line_str_dict[row[0]] += row[2] + "\t" + row[3] + "\t" + row[4] + "\t"
+    print("Finished merging data from threshold-based files.")
+
+    print("Processing additional threshold-based files...")
     for thld in threshold_list:
         matches_1_file = Path(matches_dir) / f"matches_1_out_{thld}.csv"
         if matches_1_file.is_file():
@@ -118,5 +127,9 @@ with open(outfile, "w") as o:
                         else:
                             ## status (2.0)    SH code (2.0)
                             one_line_str_dict[row[0]] += row[2] + "\t" + row[3] + "\t" + "\t"
+
+    print("All data merged successfully. Writing to output file...")
     for line in one_line_str_dict:
         o.write(one_line_str_dict[line])
+
+    print(f"Script execution completed. Data written to {outfile}.")
