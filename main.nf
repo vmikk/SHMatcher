@@ -960,6 +960,32 @@ process matches_to_uc {
     """
 }
 
+
+
+// Return single common taxonomy
+process return_common_taxonomy {
+
+    label "main_container"
+    // cpus 1
+
+    publishDir "${params.outdir}/Matches"
+
+    input:
+        path (matches, stageAs: "matches/*")   // "matches/matches_out_*.csv"
+        path inp                               // "matches_out_all.csv"
+
+    output:
+        path "matches_out_taxonomy.csv", emit: mtax
+
+    script:
+    """
+    echo -e "Returning single common taxonomy\n"
+
+    return_common_taxonomy.py \
+        --matches ./matches \
+        --infile  ${inp} \
+        --outfile matches_out_taxonomy.csv
+
     echo -e "..Done"
     """
 }
