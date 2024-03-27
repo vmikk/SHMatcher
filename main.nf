@@ -65,7 +65,8 @@ process seq_prep {
     vsearch \
         --fastx_uniques source_fasta \
         --fastaout      source_fasta_unique \
-        --uc            source_fasta_uc
+        --uc            source_fasta_uc \
+        --threads       ${task.cpus}
 
     ## Format output to restore original sequence
     echo -e "\n..Reformatting sequences\n"
