@@ -31,6 +31,9 @@ params.seqlenvariation = false  // == `include_vsearch_step` param of sh_matchin
 // Sequence filtering by alignment coverage
 params.mincoverage = 85
 
+// Max cluster size (to overcome 32-bit usearch memnory limitation)
+params.maxclustersize = 16000
+
 
 // Input sequence preparion:
 // Replace sequence identifiers with unique codes,
