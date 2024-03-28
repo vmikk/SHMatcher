@@ -308,14 +308,25 @@ process clustering_final {
     echo -e "Similarity threshold: 80"
 
     ## Clustering
-    echo -e "\n..Running USEARCH\n"
-    usearch \
-        -cluster_fast ${input} \
-        -id           0.80 \
-        -gapopen      0.0/0.0E \
-        -gapext       1.0/0.5E \
-        -sort         other \
-        -uc           clusters_80.uc
+    ## NB. vsearch scores = 2 * usearch scores
+    echo -e "\n..Running VSEARCH\n"
+    vsearch \
+        --cluster_smallmem ${input} \
+        --id               0.80 \
+        --gapopen          0I/0E \
+        --gapext           2I/1E \
+        --usersort \
+        --uc               clusters_80.uc \
+        --threads          ${task.cpus}
+
+    # echo -e "..Running USEARCH"
+    # usearch \
+    #     -cluster_fast ${input} \
+    #     -id           0.80 \
+    #     -gapopen      0.0/0.0E \
+    #     -gapext       1.0/0.5E \
+    #     -sort         other \
+    #     -uc           clusters_80.uc
 
     mkdir -p singletons
     mkdir -p clusters
