@@ -1306,6 +1306,15 @@ workflow {
 
   // Create pseudo-UC files
   matches_to_uc(merge_matches.out.matchesall)
+
+  // Return single common taxonomy
+  // based on the taxonomy information of SHs at 0.5-3.0% distance threshold
+  // and compound cluster
+  return_common_taxonomy(
+    ch_all_matches,
+    merge_matches.out.matchesall
+  )
+
   // Channel with threshold values
   ch_thresholds = Channel.fromList( ['005', '01', '015', '02', '025', '03'] )
 
