@@ -30,14 +30,25 @@ process clustering {
     echo -e "Similarity threshold:" ${threshold}
 
     ## Clustering
-    echo -e "\n..Running USEARCH\n"
-    usearch \
-        -cluster_fast ${input} \
-        -id           ${threshold} \
-        -gapopen      0.0/0.0E \
-        -gapext       1.0/0.5E \
-        -sort         other \
-        -uc           clusters_${threshold}.uc
+    ## NB. vsearch scores = 2 * usearch scores
+    echo -e "\n..Running VSEARCH\n"
+    vsearch \
+        --cluster_smallmem ${input} \
+        --id               ${threshold} \
+        --gapopen          0I/0E \
+        --gapext           2I/1E \
+        --usersort \
+        --uc               clusters_${threshold}.uc \
+        --threads          ${task.cpus}
+
+    # echo -e "..Running USEARCH"
+    # usearch \
+    #     -cluster_fast ${input} \
+    #     -id           ${threshold} \
+    #     -gapopen      0.0/0.0E
+    #     -gapext       1.0/0.5E
+    #     -sort         other \
+    #     -uc           clusters_${threshold}.uc
 
     ## Parsing cluster information
     echo -e "\n..Parsing clusters\n"
