@@ -649,7 +649,7 @@ process clustering_compounds {
     NUMSEQS="\$( grep -c '^>' ${input} || : )"
     echo -e "Number of sequences in the cluster: " "\$NUMSEQS"\n
 
-    if (( "\$NUMSEQS" > "16000" ))
+    if (( "\$NUMSEQS" > "${params.maxclustersize}" ))
     then
 
         echo "to be split:"${input}":""\$NUMSEQS"\n
