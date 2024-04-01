@@ -44,15 +44,20 @@ tmp_uc_infile = args.besthitsuc      # user_dir / "closedref.80-best-hits.map.uc
 glob_match = f"compounds/calc_distm_out/*.fas_out_{threshold}"   # f"{user_dir}/compounds/calc_distm_out/*.fas_out_{threshold}"
 log_file = args.log                  # user_dir / f"err_{run_id}.log"
 
-if not threshold.isdigit():
-    raise ValueError("Threshold is not numeric", run_id)
-
 logging.basicConfig(
     filename=log_file,
     filemode="a",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level="INFO",
 )
+
+logging.info("Script execution started.")
+
+if not threshold.isdigit():
+    logging.error("Threshold is not numeric.")
+    raise ValueError("Threshold is not numeric")
+
+logging.info(f"Threshold set to: {threshold}")
 
 ## Read in results from prev version (if singleton, no need to check it again)
 # prev_file = None
@@ -71,34 +76,46 @@ logging.basicConfig(
 if prev_file == "None":
     prev_file = None
 
+## Loading previous matches, if available
 prev_dict = {}
 if prev_file:
+    logging.info(f"Loading previous matches from: {args.matches_prev}")
     with open(prev_file) as p:
         dataReader = csv.reader(p, delimiter="\t")
         for row in dataReader:
             if row[2] == "singleton":
                 prev_dict[row[0]] = 1
+    logging.info("Previous matches loaded.")
+else:
+    logging.info("No previous matches specified or found.")
 
 # get compound and SH mappings
+logging.info(f"Loading SH to compound mappings from: {args.sh2compound}")
 sh_ucl_dict = {}
 with open(sh2compound_file) as f:
     dataReader = csv.reader(f, delimiter="\t")
     for row in dataReader:
         sh_ucl_dict[row[0]] = row[1]
+logging.info("SH to compound mappings loaded.")
 
 # read seq ids and their UCL belongings into hash
+logging.info(f"Processing sequence files with glob pattern: {glob_match}")
 seq_ucl_mapping_dict = {}
 file_list = glob.glob(glob_match)
 for file in file_list:
+    logging.info(f"Reading file: {file}")
     with open(file) as f:
         dataReader = csv.reader(f, delimiter="\t")
         for row in dataReader:
             seq_ucl_mapping_dict[row[1]] = file
+logging.info("Sequence IDs and their UCL belongings processed.")
 
 ## glob_match_folders = f"{user_dir}/compounds/*_folder"
 ## folder_list = glob.glob(glob_match_folders)
+logging.info("Processing clustering results.")
 folder_list = glob.glob("compounds/*_folder")
 for folder in folder_list:
+    logging.info(f"Processing folder: {folder}")
     compound_name = folder[:-7].replace("compounds", "compounds/calc_distm_out")
     # read in clusters
     glob_match_files = f"{folder}/calc_distm_out/*_out_{threshold}"
@@ -174,8 +191,10 @@ with open(tmp_file) as t:
                             cl_contents_dict_80[row_i_80[0]] = row_i_80[1]
                 for key_80 in cl_contents_dict_80:
                     b_90.write(cl_contents_dict_80[key_80] + "\n")
+logging.info("Clustering results processed.")
 
 # read in best matches (seq and SH)
+logging.info("Processing best matches and final output.")
 with open(tmp_uc_infile) as t, open(matches_file, "w") as o:
     dataReader = csv.reader(t, delimiter="\t")
     for row in dataReader:
@@ -229,3 +248,5 @@ with open(tmp_uc_infile) as t, open(matches_file, "w") as o:
                 o.write("singleton\t" + sh_ucl_dict[subject_sh] + "\t" + "\n")
         else:
             logging.info(f"US\tno hit for {row[8]}\n")
+
+logging.info("Script execution completed.")
