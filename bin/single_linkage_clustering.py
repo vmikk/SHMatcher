@@ -8,15 +8,21 @@
 # Tab-delimted text file (without header) with one line per sequence,
 # and two columns: cluster number (zero-based) and sequence label
 
-import numpy as np
 import fastcluster
 from scipy.spatial.distance import squareform
 from scipy.cluster.hierarchy import fcluster
 import pandas as pd
+import numpy as np
+import gzip
 import argparse
 
 def load_dissimilarity_matrix(filename):
-    df = pd.read_csv(filename, sep='\t', header=0, index_col=None)
+    if filename.endswith('.gz'):
+        with gzip.open(filename, 'rt') as f:
+            df = pd.read_csv(f, sep='\t', header=0, index_col=None, dtype=float)
+    else:
+        df = pd.read_csv(filename, sep='\t', header=0, index_col=None, dtype=float)
+
     print("DataFrame shape:", df.shape)
     seq_names = df.columns.tolist()
     matrix = df.values
