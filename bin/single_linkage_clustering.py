@@ -1,12 +1,23 @@
 #!/usr/bin/env python
 
+## Agglomerative clustering (equvalent of `usearch -cluster_aggd -linkage min`)
+
+## Example usage:
+# single_linkage_clustering.py \
+#  --input_file  Cluster0_dist.txt.gz \
+#  --output_file ./calc_distm_out/Cluster0_out_03 \
+#  --cutoff 0.97
+
 ## Input:
-# Tab-delimited (square) distance matrix,
+# Tab-delimited (square) distance matrix (optionally, gzip-compressed),
 # with header containg sequence labels
 
 ## Output:
 # Tab-delimted text file (without header) with one line per sequence,
 # and two columns: cluster number (zero-based) and sequence label
+
+## TO DO:
+# - use condenced form of dissim matrix? (but how to keep track the lables?)
 
 import fastcluster
 from scipy.spatial.distance import squareform
