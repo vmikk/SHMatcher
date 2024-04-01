@@ -38,18 +38,19 @@ def save_clusters(filename, labels, seq_names):
     df_sorted = df.sort_values(by=['Cluster', 'SeqID'])
     df_sorted.to_csv(filename, sep='\t', index=False, header=False)
 
-def main():
+def parse_arguments():
     parser = argparse.ArgumentParser(description='Perform single linkage clustering on a tab-separated distance matrix with header.')
     parser.add_argument('--input_file', type=str, required=True, help='Input file containing the dissimilarity matrix.')
     parser.add_argument('--output_file', type=str, required=True, help='Output file to save the clustering results.')
     parser.add_argument('--cutoff', type=float, required=True, help='Cutoff value for clustering.')
+    return parser.parse_args()
 
-    args = parser.parse_args()
-
+def main(args):
     matrix, seq_names = load_dissimilarity_matrix(args.input_file)
     linkage_matrix = single_linkage_clustering(matrix)
     labels = assign_cluster_labels(linkage_matrix, args.cutoff)
     save_clusters(args.output_file, labels, seq_names)
 
 if __name__ == "__main__":
-    main()
+    args = parse_arguments()
+    main(args)
