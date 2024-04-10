@@ -33,7 +33,7 @@ A base Ubuntu 20 Singularity container with basic Python packages such as HMMER3
     ${conda_prefix}/bin/conda config --add channels defaults
     ${conda_prefix}/bin/conda config --add channels conda-forge
     ${conda_prefix}/bin/conda config --add channels bioconda
-    ${conda_prefix}/bin/conda install -y -c conda-forge mamba
+    ${conda_prefix}/bin/conda install -y --quiet -c conda-forge mamba
 
     ## Conda initialization script by Antoine Prouvost
     # https://github.com/ds4dm/singularity-conda/blob/main/conda.def
@@ -54,7 +54,7 @@ A base Ubuntu 20 Singularity container with basic Python packages such as HMMER3
     } >> ${conda_prefix}/init.bash
 
     ## Create conda environment and install software
-    ${conda_prefix}/bin/mamba install -y \
+    ${conda_prefix}/bin/mamba install -y --quiet \
       "biopython>=1.79" \
       "vsearch>=2.22" \
       "krona>=2.7.1" \
