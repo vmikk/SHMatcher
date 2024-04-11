@@ -11,7 +11,7 @@ import subprocess
 
 parser = argparse.ArgumentParser(description="Script to run usearch single-linkage clustering for 90 percent clusters")
 parser.add_argument("--cluster",    help="File for clustering")
-parser.add_argument("--uclust_dir", default="compounds",       help="Directory with clusters")
+parser.add_argument("--uclust_dir", default="compounds",       help="Directory with clusters -- NOT USED")
 parser.add_argument("--out_dir",    default="calc_distm_out", help="Output directory")
 parser.add_argument("--cl_tmp",     default="tmp.txt",        help="Temp file with clustering results")
 parser.add_argument("--threads",    default=8,                help="CPU threads")
@@ -52,6 +52,7 @@ with open(cl_tmp_file) as f:
         out_code_005 = code + "_out_005"
         out_code_url_005 = os.path.join(out_dir, out_code_005)
 
+        ## Create sparse distance matrix
         # usearch -calc_distmx ClusterX -tabbedout mx_03.txt -maxdist 0.03 -threads 8
         usearch_cmd_1 = subprocess.run(
             [
@@ -64,64 +65,97 @@ with open(cl_tmp_file) as f:
             stdout=subprocess.DEVNULL,
         )
 
+        ## Run single-linkage clustering at various cutoff thresholds
         # usearch -cluster_aggd mx_03.txt -clusterout clusters.txt -id 0.97 -linkage min
         usearch_cmd_2 = subprocess.run(
             [
-                usearch_program,
-                "-cluster_aggd",  mx_code_url,
-                "-clusterout",    out_code_url_03,
-                "-id",            "0.97",
-                "-linkage",       "min",
+                # usearch_program,
+                # "-cluster_aggd",  mx_code_url,
+                # "-clusterout",    out_code_url_03,
+                # "-id",            "0.97",
+                # "-linkage",       "min",
+
+                "single_linkage",
+                "--input",  mx_code_url,
+                "--output", out_code_url_03,
+                "--cutoff", "0.03",
+
             ],
             stdout=subprocess.DEVNULL,
         )
         usearch_cmd_3 = subprocess.run(
             [
-                usearch_program,
-                "-cluster_aggd",  mx_code_url,
-                "-clusterout",    out_code_url_025,
-                "-id",            "0.975",
-                "-linkage",       "min",
+                # usearch_program,
+                # "-cluster_aggd",  mx_code_url,
+                # "-clusterout",    out_code_url_025,
+                # "-id",            "0.975",
+                # "-linkage",       "min",
+
+                "single_linkage",
+                "--input",  mx_code_url,
+                "--output", out_code_url_025,
+                "--cutoff", "0.025",
             ],
             stdout=subprocess.DEVNULL,
         )
         usearch_cmd_4 = subprocess.run(
             [
-                usearch_program,
-                "-cluster_aggd",  mx_code_url,
-                "-clusterout",    out_code_url_02,
-                "-id",            "0.98",
-                "-linkage",       "min",
+                # usearch_program,
+                # "-cluster_aggd",  mx_code_url,
+                # "-clusterout",    out_code_url_02,
+                # "-id",            "0.98",
+                # "-linkage",       "min",
+
+                "single_linkage",
+                "--input",  mx_code_url,
+                "--output", out_code_url_02,
+                "--cutoff", "0.02",
             ],
             stdout=subprocess.DEVNULL,
         )
         usearch_cmd_5 = subprocess.run(
             [
-                usearch_program,
-                "-cluster_aggd",  mx_code_url,
-                "-clusterout",    out_code_url_015,
-                "-id",            "0.985",
-                "-linkage",       "min",
+                # usearch_program,
+                # "-cluster_aggd",  mx_code_url,
+                # "-clusterout",    out_code_url_015,
+                # "-id",            "0.985",
+                # "-linkage",       "min",
+
+                "single_linkage",
+                "--input",  mx_code_url,
+                "--output", out_code_url_015,
+                "--cutoff", "0.015",
+
             ],
             stdout=subprocess.DEVNULL,
         )
         usearch_cmd_6 = subprocess.run(
             [
-                usearch_program,
-                "-cluster_aggd",  mx_code_url,
-                "-clusterout",    out_code_url_01,
-                "-id",            "0.99",
-                "-linkage",       "min",
+                # usearch_program,
+                # "-cluster_aggd",  mx_code_url,
+                # "-clusterout",    out_code_url_01,
+                # "-id",            "0.99",
+                # "-linkage",       "min",
+
+                "single_linkage",
+                "--input",  mx_code_url,
+                "--output", out_code_url_01,
+                "--cutoff", "0.01",
             ],
             stdout=subprocess.DEVNULL,
         )
         usearch_cmd_7 = subprocess.run(
             [
-                usearch_program,
-                "-cluster_aggd",  mx_code_url,
-                "-clusterout",    out_code_url_005,
-                "-id",            "0.995",
-                "-linkage",       "min",
+                # usearch_program,
+                # "-cluster_aggd",  mx_code_url,
+                # "-clusterout",    out_code_url_005,
+                # "-id",            "0.995",
+                # "-linkage",       "min",
+
+                "single_linkage",
+                "--input",  mx_code_url,
+                "--output", out_code_url_005,
+                "--cutoff", "0.005",
             ],
             stdout=subprocess.DEVNULL,
         )
