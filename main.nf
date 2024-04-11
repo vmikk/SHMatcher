@@ -416,6 +416,7 @@ process agglomerative_clustering {
             -threads ${task.cpus}
 
         mkdir -p "clusters"
+        mkdir -p "singletons"
         mkdir -p "calc_distm_out"
 
         ## Parse usearch clusters
@@ -428,6 +429,18 @@ process agglomerative_clustering {
             --tmp_cl_file     tmp.txt \
             --tmp_singl_file  singletons.txt \
             --log_file        err.log
+
+        ## Create pseudo-cluster with singletons
+        echo -e "\n..Checking for singletons\n"
+        num_singletons=\$(wc -l < singletons.txt)
+        if [ "\$num_singletons" -gt 0 ]; then
+            echo -e "Number of singletons detected: " "\$num_singletons"\n
+            echo -e "Creating a pseudo-cluster\n"
+            echo "ClusterS" >> tmp.txt
+            find ./singletons -type f | parallel -j1 "cat {}" >> ./clusters/ClusterS
+        else
+            echo "No singletons found\n"
+        fi
 
         ## Calculate usearch distance matrix
         echo -e "\n..Complete-linkage clustering of sub-clusters\n"
