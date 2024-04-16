@@ -797,51 +797,45 @@ process clustering_compounds {
         ## Agglomerative clustering (single-linkage)
         ## 97.0%
         echo -e "\n..97.0% clustering\n"
-        usearch \
-            -cluster_aggd ${input}_mx_03 \
-            -clusterout   calc_distm_out/${input}_out_03 \
-            -id      0.97 \
-            -linkage "min"
+        single_linkage \
+            --input  ${input}_mx_03 \
+            --output calc_distm_out/${input}_out_03 \
+            --cutoff 0.03
 
         ## 97.5%
         echo -e "\n..97.5% clustering\n"
-        usearch \
-            -cluster_aggd ${input}_mx_03 \
-            -clusterout   calc_distm_out/${input}_out_025 \
-            -id      0.975 \
-            -linkage "min"
+        single_linkage \
+            --input  ${input}_mx_03 \
+            --output calc_distm_out/${input}_out_025 \
+            --cutoff 0.025
 
         ## 98.0%
         echo -e "\n..98.0% clustering\n"
-        usearch \
-            -cluster_aggd ${input}_mx_03 \
-            -clusterout   calc_distm_out/${input}_out_02 \
-            -id      0.98 \
-            -linkage "min"
+        single_linkage \
+            --input  ${input}_mx_03 \
+            --output calc_distm_out/${input}_out_02 \
+            --cutoff 0.02
 
         ## 98.5%
         echo -e "\n..98.5% clustering\n"
-        usearch \
-            -cluster_aggd ${input}_mx_03 \
-            -clusterout   calc_distm_out/${input}_out_015 \
-            -id      0.985 \
-            -linkage "min"
+        single_linkage \
+            --input  ${input}_mx_03 \
+            --output calc_distm_out/${input}_out_015 \
+            --cutoff 0.015
 
         ## 99.0%
         echo -e "\n..99.0% clustering\n"
-        usearch \
-            -cluster_aggd ${input}_mx_03 \
-            -clusterout   calc_distm_out/${input}_out_01 \
-            -id      0.99 \
-            -linkage "min"
+        single_linkage \
+            --input  ${input}_mx_03 \
+            --output calc_distm_out/${input}_out_01 \
+            --cutoff 0.01
 
         ## 99.5%
         echo -e "\n..99.5% clustering\n"
-        usearch \
-            -cluster_aggd ${input}_mx_03 \
-            -clusterout   calc_distm_out/${input}_out_005 \
-            -id      0.995 \
-            -linkage "min"
+        single_linkage \
+            --input  ${input}_mx_03 \
+            --output calc_distm_out/${input}_out_005 \
+            --cutoff 0.005
 
     fi
 
