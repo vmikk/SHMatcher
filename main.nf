@@ -709,6 +709,22 @@ process clustering_compounds {
         #   | sort --version-sort \
         #   > singletons.txt
 
+        ## Merge singletons into a single pseudo-cluster
+        ## And remove non-user-supplied sequences
+        echo -e "\n..Checking for singletons\n"
+        num_singletons=\$(wc -l < singletons.txt)
+        if [ "\$num_singletons" -gt 0 ]; then
+            echo -e "Number of singletons detected: " "\$num_singletons"\n
+            echo -e "Creating a pseudo-cluster\n"
+            echo "ClusterS" >> tmp.txt
+            find ./singletons -type f | parallel -j1 "cat {}" \
+                | awk -f \$(which "linearize_fasta.awk") \
+                | rg ">iid_" -A 1 \
+                >> ./clusters/ClusterS
+        else
+            echo "No singletons found\n"
+        fi
+
         ## Calculate SHs (max 3.0% distance)
         ## Calculate usearch distance matrix and generate (SH) clusters
         echo -e "\n..Calculating SHs, single-linkage clustering\n"
