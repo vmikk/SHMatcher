@@ -25,23 +25,37 @@ threads = args.threads      # 8
 
 usearch_program = "usearch"
 
-code = name
+code = args.name
 code_url = uclust_dir / code
 mx_code = code + "_mx_005"
 mx_code_url = out_dir / mx_code
 out_code_005 = code + "_out_005"
 out_code_url_005 = out_dir / out_code_005
 
+# Function to handle subprocesses
+def run_subprocess(command):
+    result = subprocess.run(command, stdout=subprocess.DEVNULL)
+    if result.returncode != 0:
+        raise subprocess.CalledProcessError(result.returncode, command)
+
+## Calculate distance matrix
 # usearch -calc_distmx ClusterX -tabbedout mx_005.txt -maxdist 0.005 -threads 8
-usearch_cmd_1 = subprocess.run(
-    [usearch_program, "-calc_distmx", code_url, "-tabbedout", mx_code_url, "-maxdist", "0.005", "-threads", threads],
-    stdout=subprocess.DEVNULL,
-)
+run_subprocess([
+    usearch_program,
+    "-calc_distmx", code_url,
+    "-tabbedout",   mx_code_url,
+    "-maxdist",     "0.005",
+    "-threads",     threads,
+])
 
-# usearch -cluster_aggd mx_005.txt -clusterout clusters.txt -id 0.995 -linkage max
-usearch_cmd_1 = subprocess.run(
-    [usearch_program, "-cluster_aggd", mx_code_url, "-clusterout", out_code_url_005, "-id", "0.995", "-linkage", "max"],
-    stdout=subprocess.DEVNULL,
-)
+## Complete linkage clustering
+run_subprocess([
+    usearch_program,
+    "-cluster_aggd", mx_code_url,
+    "-clusterout",   out_code_url_005,
+    "-id",           "0.995",
+    "-linkage",      "max"
+])
 
-rm_cmd_1 = subprocess.run(["rm", str(mx_code_url)], stdout=subprocess.DEVNULL)
+## Clean up intermediate files
+run_subprocess(["rm", str(mx_code_url)])
