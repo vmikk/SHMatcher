@@ -12,13 +12,14 @@ from Bio import SeqIO
 
 parser = argparse.ArgumentParser(description="Script to exclude chimeras identified by vsearch")
 
-parser.add_argument("--global_infile", default="usearch_global.full.75.blast6out.txt", help="Blast6out input file")
-parser.add_argument("--infile",        default="seqs_out.fasta",      help="Input file")
-parser.add_argument("--outfile",       default="seqs_out_chim.fasta", help="Chimeric sequences")
-parser.add_argument("--log_file",      default="err.log",             help="Log file name")
-parser.add_argument("--ex_file",       default="excluded.txt",        help="Excluded seqs log")
-parser.add_argument("--region",        help="ITS region (either its2 or itsfull)")
-parser.add_argument("--mincoverage",   default=85, type=float, help="Minimum alignment coverage")
+parser.add_argument("--global_infile",    default="usearch_global.full.75.blast6out.txt", help="Blast6out input file")
+parser.add_argument("--infile",           default="seqs_out.fasta",      help="Input file")
+parser.add_argument("--outfile",          default="seqs_out_chim.fasta", help="Chimeric sequences")
+parser.add_argument("--cov100_uniq_file", default="source_fastanames",   help="List of duplicate sequences in user's input data")
+parser.add_argument("--log_file",         default="err.log",             help="Log file name")
+parser.add_argument("--ex_file",          default="excluded.txt",        help="Excluded seqs log")
+parser.add_argument("--region",           help="ITS region (either its2 or itsfull)")
+parser.add_argument("--mincoverage",      default=85, type=float, help="Minimum alignment coverage")
 parser.add_argument("--minlen1", type=int, help="Minimum alignment length (for chimera removal)")
 parser.add_argument("--minlen2", type=int, help="Minimum sequence length (for short sequence removal)")
 
@@ -29,6 +30,7 @@ args = parser.parse_args()
 global_infile = args.global_infile  # user_dir / "usearch_global.full.75.blast6out.txt"
 infile        = args.infile         # user_dir / "seqs_out.fasta"
 outfile       = args.outfile        # user_dir / "seqs_out_chim.fasta"
+cov100_uniq_file = args.cov100_uniq_file  # user_dir / f"source_{run_id}_fastanames"
 log_file      = args.log_file       # user_dir / f"err_{run_id}.log"
 ex_file       = args.ex_file        # user_dir / f"excluded_{run_id}.txt"
 region        = args.region
@@ -66,6 +68,14 @@ if args.minlen2 is not None:
 
 global_chim_dict = {}
 
+# include info about duplicate sequences
+cov100_uniq_dict = {}
+with open(cov100_uniq_file, "r") as f:
+    dataReader = csv.reader(f, delimiter="\t")
+    for row in dataReader:
+        # include only those sequences where duplicates are present
+        cov100_uniq_dict[row[0]] = row[1]
+
 # open excluded seq file
 with open(ex_file, "a") as ex, open(global_infile) as glob:
     # open blast6out file for parsing
@@ -97,7 +107,7 @@ with open(ex_file, "a") as ex, open(global_infile) as glob:
             elif int(row[3]) < len_limit_1 and int(row[7]) >= len_limit_1:
                 global_chim_dict[row[0]] = 1
         else:
-            logging.info(f"CHIM\tNOHIT_RECORD\t{row[0]}")
+            logging.info(f"CHIM\tNOHIT_RECORD\t{cov100_uniq_dict[row[0]]}")
             nohit_counter += 1
 
     logging.info(f"CHIM\tNo. of nohits: {nohit_counter}")
@@ -110,13 +120,11 @@ with open(ex_file, "a") as ex, open(global_infile) as glob:
                     o.write(f"{record.seq}\n")
                 else:
                     nogo_counter += 1
-                    logging.info(f"CHIM\tNOGO_RECORD\t{record.id}")
-                    ex.write(f"{record.id}\tCHIM\tSequence too short (<{len_limit_2} nucl).\n")
+                    logging.info(f"CHIM\tNOGO_RECORD\t{cov100_uniq_dict[record.id]}")
+                    ex.write(f"{cov100_uniq_dict[record.id]}\tCHIM\tSequence too short (<{len_limit_2} nucl).\n")
             else:
                 chim_counter += 1
-                logging.info(f"CHIM\tCHIM_RECORD\t{record.id}")
-                ex.write(
-                    f"{record.id}\tCHIM\tIdentified as chimeric based on the results of vsearch (usearch_global) chimera detection.\n"
-                )
+                logging.info(f"CHIM\tCHIM_RECORD\t{cov100_uniq_dict[record.id]}")
+                ex.write(f"{cov100_uniq_dict[record.id]}\tCHIM\tIdentified as chimeric based on the results of vsearch (usearch_global) chimera detection.\n")
 
     logging.info(f"CHIM\tNo go for {nogo_counter} (length) + {chim_counter} (chims) sequences.")
