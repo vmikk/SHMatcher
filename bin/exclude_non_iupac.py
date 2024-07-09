@@ -3,6 +3,7 @@
 ## Script to remove sequences with more than X ambiguous bases
 
 import argparse
+import csv
 import logging
 import os
 import re
