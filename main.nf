@@ -124,6 +124,7 @@ process chimera_filtering {
     exclude_chims.py \
         --global_infile usearch_global.full.75.blast6out.txt \
         --infile        ${input} \
+        --cov100_uniq_file ${fastanames} \
         --outfile       seqs_out_chim.fasta \
         --log_file      err.log \
         --ex_file       excluded.txt \
