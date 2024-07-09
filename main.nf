@@ -1118,12 +1118,15 @@ workflow {
   // Chimera filtering
   chimera_filtering(
     seq_prep.out.unique,
+    seq_prep.out.namesuniq,
     ch_db)
 
   // Additional quality controls
   exclude_non_iupac(
     chimera_filtering.out.fasta,
-    seq_prep.out.unique)
+    seq_prep.out.namesuniq,
+    seq_prep.out.unique
+    )
 
   if(params.seqlenvariation){
     // Allow query sequences vary 4% in length at 100% similarity  (`include_vsearch_step` == "yes")
