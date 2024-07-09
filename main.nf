@@ -150,8 +150,9 @@ process exclude_non_iupac {
         saveAs: { filename -> "2_NonIUPAC.txt" }
 
     input:
-        path input
-        path inputuniq
+        path input       // seqs_out_chim.fasta
+        path fastanames  // source_RUNID_fastanames
+        path inputuniq   // source_RUNID_fastaunique
 
     output:
         path "iupac_out_full.fasta",       emit: iupac
@@ -167,6 +168,7 @@ process exclude_non_iupac {
     exclude_non_iupac.py \
         --infile              ${input} \
         --infile_orig         ${inputuniq} \
+        --cov100_uniq_file    ${fastanames} \
         --outfile             iupac_out_full.fasta \
         --outfile_vsearch_96  iupac_out_vsearch_96.fasta \
         --log_file            err.log \
