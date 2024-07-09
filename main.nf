@@ -93,8 +93,9 @@ process chimera_filtering {
         saveAs: { filename -> "1_Chimerae.txt" }
 
     input:
-        path input
-        path db        // sanger_refs_sh.udb
+        path input       // seqs_out.fasta
+        path fastanames  // source_RUNID_fastanames
+        path db          // sanger_refs_sh.udb
 
     output:
         path "seqs_out_chim.fasta",                  emit: fasta
